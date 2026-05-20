@@ -1,0 +1,449 @@
+﻿/* Container chính */
+.product-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 25px;
+    padding: 200px;
+}
+
+/* Danh mục dọc bên trái */
+.category-menu-vertical {
+    min-width: 220px;
+    margin-right: 20px;
+    border-right: 2px solid #ddd;
+    padding-right: 15px;
+}
+
+    .category-menu-vertical ul {
+        list-style: none;
+        padding: 0;
+    }
+
+/* Tiêu đề trang */
+h2 {
+    color: #000;
+    margin-bottom: 40px;
+    font-size: 2rem;
+    margin-top: 300px;
+    text-align: center;
+}
+
+
+/* Thanh điều hướng */
+.nav .menu-item {
+    position: relative;
+    padding: 0 20px;
+    line-height: 60px;
+}
+
+.nav ul {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+}
+
+.nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+    .nav a:hover {
+        color: #f5d4be;
+        text-decoration: underline;
+    }
+
+/* Submenu */
+.submenu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #000;
+    padding: 15px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+.submenu-column {
+    padding: 10px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+    .submenu-column h4 {
+        font-weight: bold;
+        margin-bottom: 8px;
+        text-decoration: underline;
+    }
+
+    .submenu-column p {
+        margin: 5px 0;
+    }
+
+    .submenu-column a {
+        color: black;
+        text-decoration: none;
+    }
+
+        .submenu-column a:hover {
+            color: #ff6600;
+            text-decoration: underline;
+        }
+
+.menu-item:hover a {
+    text-decoration: underline;
+}
+
+.menu-item:hover .submenu {
+    display: block;
+}
+
+/* Các nút lọc danh mục ngang */
+.category-menu a {
+    font-weight: bold;
+    border-radius: 20px;
+    padding: 8px 16px;
+    margin: 5px;
+    transition: all 0.3s ease;
+}
+
+    .category-menu a:hover {
+        background-color: #343a40;
+        color: #fff;
+    }
+
+.product-page {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.category-menu-vertical {
+    min-width: 220px;
+    max-width: 250px;
+    border-right: 2px solid #ddd;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.product-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    flex-grow: 1;
+    justify-content: flex-start;
+}
+
+.btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-primary, .btn-warning {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+    .btn-primary:hover, .btn-warning:hover {
+        opacity: 0.8;
+    }
+
+.price {
+    font-size: 24px;
+    color: #d35400;
+    margin-bottom: 15px;
+}
+
+.product-name {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+}
+
+.product-price {
+    font-size: 22px;
+    color: #d35400;
+    margin: 10px 0;
+}
+
+.product-description {
+    font-weight: 600;
+    margin-bottom: 5px;
+    margin-top: 20px;
+    line-height: 1.6;
+}
+
+.btn-group {
+    gap: 10px;
+}
+
+.btn-primary, .btn-warning {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+.product-image {
+    width: 500px; /* Phóng to hình */
+    max-width: 100%;
+    height: auto;
+    border-radius: 10%;
+    /*    background-color: #f7e7da;*/
+    padding: 20px;
+    margin: auto;
+    display: block;
+    object-fit: cover;
+}
+
+.product-name {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.product-price {
+    font-size: 28px;
+    color: orange;
+    margin: 10px 0;
+}
+
+.size-option, .topping-option {
+    margin: 5px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    background-color: #f7f7f7;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+    .size-option:hover, .topping-option:hover {
+        background-color: #eee;
+    }
+
+    .size-option.active, .topping-option.active {
+        background-color: #ff9900;
+        color: white;
+    }
+
+.order-button {
+    background-color: #ff9900;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 25px;
+    margin-top: 20px;
+    width: 100%;
+    font-size: 18px;
+}
+/* Định dạng nút đặt hàng và thêm vào giỏ hàng */
+.order-button, .add-cart-button {
+    background-color: #ff8a9f; /* Màu cam vừa */
+    color: white;
+    font-weight: bold; /* Chữ đậm hơn */
+    border: none;
+    padding: 5px 10px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-size: 18px; /* Đặt cùng kích thước chữ */
+    min-width: 210px; /*    font-size: 14px;*/
+}
+
+    .order-button:hover, .add-cart-button:hover {
+        background-color: #ff6f8f; /* Màu cam đậm hơn khi hover */
+        transform: scale(1.05); /* Phóng to nhẹ khi hover */
+    }
+
+/* Định dạng cho các tùy chọn size và topping */
+.size-option, .topping-option {
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    margin: 3px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .size-option:hover, .topping-option:hover {
+        background-color: #e0e0e0;
+    }
+
+    .size-option.active, .topping-option.active {
+        background-color: #FF5722;
+        color: white;
+    }
+
+
+/* Định dạng sản phẩm liên quan */
+.related-products {
+    margin-top: 20px;
+}
+
+.related-carousel {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+}
+
+.related-item {
+    flex: 0 0 auto;
+    text-align: center;
+    margin: 5px;
+    width: 120px;
+    text-align: center;
+    border-radius: 8px;
+    transition: transform 0.2s ease-in-out;
+}
+
+    .related-item img {
+        width: 100%;
+        border-radius: 8px;
+    }
+
+.related-name {
+    font-weight: bold;
+}
+
+.related-price {
+    color: #FF5722;
+}
+
+.related-item:hover {
+    transform: scale(1.05);
+}
+
+.quantity-container {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    gap: 10px;
+}
+
+.quantity-input {
+    width: 60px;
+    padding: 5px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.product-image {
+    width: 100%;
+    max-width: 350px;
+}
+
+.quantity-input {
+    width: 60px;
+    text-align: center;
+}
+
+.size-option, .topping-option {
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.2s ease-in-out;
+}
+
+    .size-option.active, .topping-option.active {
+        background-color: #ff9800;
+        color: white;
+        transform: scale(1.1);
+    }
+
+.btn-group {
+    margin-top: 15px;
+}
+
+/* Pagination Styles */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    border-radius: 0.25rem;
+}
+
+.page-item {
+    margin: 0 5px;
+}
+
+.page-link {
+    color: #ff8a9f;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    text-decoration: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.page-item.active .page-link {
+    background-color: #ff8a9f;
+    color: white;
+    border-color: #ff8a9f;
+}
+
+.page-link:hover {
+    background-color: #ff6f8f;
+    color: white;
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #ddd;
+}
+.cart-icon {
+    position: relative;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.cart-count {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #f5935b; /* Red background */
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: none; /* Hidden by default */
+}

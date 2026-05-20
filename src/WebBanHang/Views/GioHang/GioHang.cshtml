@@ -1,0 +1,979 @@
+﻿@model List<WebBanHang.Models.GioHang>
+
+@{
+    ViewBag.Title = "Giỏ hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- HERO -->
+<section class="cart-hero">
+
+    <div class="hero-overlay"></div>
+
+    <video autoplay muted loop playsinline class="hero-video">
+
+        <source src="@Url.Content("~/video/vd6.mp4")" type="video/mp4" />
+
+    </video>
+
+    <div class="hero-content">
+
+        <h1>
+            Giỏ hàng của bạn
+        </h1>
+
+        <p>
+            Sweet drinks • Sweet moments • Sweet life 🌸
+        </p>
+
+    </div>
+
+</section>
+
+<!-- CART -->
+<section class="cart-section">
+
+    <div class="container">
+
+        <!-- EMPTY -->
+        <div id="cart-empty-message"
+             class="empty-cart-box"
+             style="@(Model == null || !Model.Any() ? "" : "display:none;")">
+
+            <h3>
+                Giỏ hàng của bạn đang trống 🛒
+            </h3>
+
+            <p>
+                Hãy khám phá menu đáng yêu của Rosabelle Tea nhé 💖
+            </p>
+
+            <a href="@Url.Action("SanPham", "SanPham")"
+               class="continue-shopping-btn">
+
+                Tiếp tục mua sắm
+
+            </a>
+
+        </div>
+
+        <!-- CONTENT -->
+        @if (Model != null && Model.Any())
+        {
+            <div id="cart-content">
+
+                <div class="cart-table-wrapper">
+
+                    <table id="cart-table"
+                           class="cart-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th width="80">
+                                    <input type="checkbox" id="select-all" />
+                                </th>
+
+                                <th>
+                                    Sản phẩm
+                                </th>
+
+                                <th>
+                                    Size
+                                </th>
+
+                                <th>
+                                    Topping
+                                </th>
+
+                                <th>
+                                    Giá
+                                </th>
+
+                                <th>
+                                    Số lượng
+                                </th>
+
+                                <th>
+                                    Thành tiền
+                                </th>
+
+                                <th>
+                                    Hành động
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                var toppingIds = item.GioHang_Topping
+                                    .Select(gt => gt.Topping.ToppingID)
+                                    .ToList();
+
+                                var toppingIdsJson =
+                                    Newtonsoft.Json.JsonConvert.SerializeObject(toppingIds);
+
+                                <tr data-toppingids='@toppingIdsJson'>
+
+                                    <!-- CHECK -->
+                                    <td>
+
+                                        <input type="checkbox"
+                                               class="select-item"
+                                               data-giohangid="@item.GioHangID"
+                                               data-totalprice="@item.TotalPrice" />
+
+                                    </td>
+
+                                    <!-- PRODUCT -->
+                                    <td>
+
+                                        <div class="product-info">
+
+                                            <img src="@(string.IsNullOrEmpty(item.Food.ImageURL)
+                                                ? Url.Content("~/images/no-image.png")
+                                                : Url.Content(item.Food.ImageURL))"
+                                                 class="product-thumb" />
+
+                                            <div>
+
+                                                <h4>
+                                                    @item.Food.FoodName
+                                                </h4>
+
+                                                <span>
+                                                    Rosabelle Tea 🌸
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+                                    <!-- SIZE -->
+                                    <td>
+
+                                        @if (item.Size != null)
+                                        {
+                                            <div class="badge-option">
+
+                                                @item.Size.SizeName
+                                                (+@String.Format("{0:N0} ₫", item.Size.ExtraPrice))
+
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                Không có
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                    <!-- TOPPING -->
+                                    <td>
+
+                                        @if (item.GioHang_Topping.Any())
+                                        {
+                                            foreach (var topping in item.GioHang_Topping)
+                                            {
+                                                <div class="badge-option">
+
+                                                    @topping.Topping.ToppingName
+                                                    (+@String.Format("{0:N0} ₫", topping.Topping.ToppingPrice))
+
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                Không có
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                    <!-- PRICE -->
+                                    <td class="price-text">
+
+                                        @String.Format("{0:N0} ₫", item.Food.Price)
+
+                                    </td>
+
+                                    <!-- QUANTITY -->
+                                    <td>
+
+                                        <input type="number"
+                                               min="1"
+                                               value="@item.SoLuong"
+                                               class="soLuongInput"
+                                               data-foodid="@item.FoodId"
+                                               data-sizeid="@(item.SizeID.HasValue ? item.SizeID.Value.ToString() : "0")">
+
+                                    </td>
+
+                                    <!-- TOTAL -->
+                                    <td class="total-price total-text">
+
+                                        @String.Format("{0:N0} ₫", item.TotalPrice)
+
+                                    </td>
+
+                                    <!-- ACTION -->
+                                    <td>
+
+                                        <a href="#"
+                                           class="remove-btn btn-xoa"
+                                           data-foodid="@item.Food.FoodId"
+                                           data-sizeid="@(item.SizeID.HasValue ? item.SizeID.Value.ToString() : "0")">
+
+                                            Xóa
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- SUMMARY -->
+                <div class="cart-summary">
+
+                    <div id="total-price" class="summary-total">
+
+                        Tổng tiền: 0 ₫
+
+                    </div>
+
+                    <div class="summary-buttons">
+
+                        <a href="@Url.Action("SanPham", "SanPham")"
+                           class="continue-btn">
+
+                            Tiếp tục mua sắm
+
+                        </a>
+
+                        <a href="#"
+                           id="btn-thanh-toan"
+                           class="checkout-btn">
+
+                            Thanh toán ✨
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</section>
+
+<style>
+
+    body {
+        background: #fffaf8;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    /* HERO */
+
+    .cart-hero {
+        position: relative;
+        height: 450px;
+        overflow: hidden;
+    }
+
+    .hero-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.35);
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: absolute;
+        z-index: 2;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: white;
+    }
+
+        .hero-content span {
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-size: 13px;
+            color: #ffd9e4;
+        }
+
+        .hero-content h1 {
+            font-size: 64px;
+            font-weight: 700;
+            margin: 20px 0;
+            color: white;
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            opacity: 0.95;
+            color: white;
+        }
+
+    /* SECTION */
+
+    .cart-section {
+        padding: 90px 0;
+    }
+
+    /* EMPTY */
+
+    .empty-cart-box {
+        background: white;
+        border-radius: 35px;
+        padding: 70px 40px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+        .empty-cart-box h3 {
+            font-size: 38px;
+            color: #5d4c54;
+            margin-bottom: 15px;
+        }
+
+        .empty-cart-box p {
+            color: #888;
+            margin-bottom: 35px;
+        }
+
+    .continue-shopping-btn {
+        display: inline-block;
+        padding: 16px 35px;
+        border-radius: 999px;
+        background: #f3c4d1;
+        color: #6a4d56;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    /* TABLE */
+
+    .cart-table-wrapper {
+        background: white;
+        border-radius: 35px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .cart-table thead {
+            background: #fdf0f4;
+        }
+
+        .cart-table th {
+            padding: 25px 20px;
+            color: #5d4c54;
+            font-size: 15px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .cart-table td {
+            padding: 25px 20px;
+            vertical-align: middle;
+            border-top: 1px solid #f5f5f5;
+            text-align: center;
+        }
+
+    /* PRODUCT */
+
+    .product-info {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        text-align: left;
+    }
+
+    .product-thumb {
+        width: 110px;
+        height: 110px;
+        object-fit: cover;
+        border-radius: 22px;
+    }
+
+    .product-info h4 {
+        color: #5d4c54;
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+
+    .product-info span {
+        color: #999;
+        font-size: 14px;
+    }
+
+    /* OPTION */
+
+    .badge-option {
+        background: #fff1f5;
+        color: #7b5b65;
+        padding: 10px 16px;
+        border-radius: 999px;
+        display: inline-block;
+        margin: 5px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    /* PRICE */
+
+    .price-text,
+    .total-text {
+        color: #d88ca0;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    /* INPUT */
+
+    .soLuongInput {
+        width: 90px;
+        height: 52px;
+        border-radius: 18px;
+        border: none;
+        background: #fff7fa;
+        text-align: center;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    /* REMOVE */
+
+    .remove-btn {
+        background: #ffe5eb;
+        color: #d26b86;
+        padding: 12px 20px;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .remove-btn:hover {
+            background: #ffd3de;
+            color: #c45f79;
+        }
+
+    /* SUMMARY */
+
+    .cart-summary {
+        margin-top: 40px;
+        background: white;
+        border-radius: 35px;
+        padding: 35px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    .summary-total {
+        font-size: 36px;
+        color: #5d4c54;
+        font-weight: 700;
+        margin-bottom: 30px;
+    }
+
+    .summary-buttons {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .continue-btn,
+    .checkout-btn {
+        padding: 18px 35px;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+    .continue-btn {
+        background: #fff1f5;
+        color: #7b5b65;
+    }
+
+    .checkout-btn {
+        background: #f3c4d1;
+        color: #6a4d56;
+    }
+
+        .continue-btn:hover,
+        .checkout-btn:hover {
+            transform: translateY(-3px);
+        }
+
+    /* RESPONSIVE */
+
+    @@media(max-width: 1200px) {
+
+        .cart-table {
+            min-width: 1100px;
+        }
+
+        .cart-table-wrapper {
+            overflow-x: auto;
+        }
+    }
+
+    @@media(max-width: 768px) {
+
+        .hero-content h1 {
+            font-size: 42px;
+        }
+
+        .summary-total {
+            font-size: 28px;
+        }
+
+        .summary-buttons {
+            flex-direction: column;
+        }
+
+        .continue-btn,
+        .checkout-btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+@section scripts {
+    <script>
+
+    function updateSelectedTotal() {
+
+        var total = 0;
+
+        var checkedBoxes = document.querySelectorAll(".select-item:checked");
+        if (checkedBoxes && checkedBoxes.length > 0) {
+            checkedBoxes.forEach(checkbox => {
+
+                var totalPrice =
+                    parseFloat(checkbox.getAttribute("data-totalprice"));
+
+                if (!isNaN(totalPrice)) {
+                    total += totalPrice;
+                }
+            });
+        }
+
+        var totalPriceElement = document.getElementById("total-price");
+        if (totalPriceElement) {
+            totalPriceElement.innerHTML =
+                "Tổng tiền: " +
+                total.toLocaleString("vi-VN") +
+                " ₫";
+        }
+    }
+
+    var selectAll = document.getElementById("select-all");
+    if (selectAll) {
+        selectAll.addEventListener("change", function () {
+            var isChecked = this.checked;
+            var allItems = document.querySelectorAll(".select-item");
+            if (allItems) {
+                allItems.forEach(checkbox => checkbox.checked = isChecked);
+            }
+            updateSelectedTotal();
+        });
+    }
+
+    var selectItems = document.querySelectorAll(".select-item");
+    if (selectItems && selectItems.length > 0) {
+        selectItems.forEach(checkbox => {
+
+            checkbox.addEventListener("change", function () {
+
+                var allCheckboxes =
+                    document.querySelectorAll(".select-item");
+
+                var checkedCheckboxes =
+                    document.querySelectorAll(".select-item:checked");
+
+                var selectAllCheckbox = document.getElementById("select-all");
+                if (selectAllCheckbox && allCheckboxes && checkedCheckboxes) {
+                    selectAllCheckbox.checked =
+                        allCheckboxes.length === checkedCheckboxes.length;
+                }
+
+                updateSelectedTotal();
+            });
+        });
+    }
+
+    var thanhToanBtn = document.getElementById("btn-thanh-toan");
+    if (thanhToanBtn) {
+        thanhToanBtn.addEventListener("click", function (e) {
+
+            e.preventDefault();
+
+            var selectedItems = [];
+
+            var checkedBoxes = document.querySelectorAll(".select-item:checked");
+            if (checkedBoxes && checkedBoxes.length > 0) {
+                checkedBoxes.forEach(checkbox => {
+
+                    var giohangId = checkbox.getAttribute("data-giohangid");
+                    if (giohangId) {
+                        selectedItems.push(parseInt(giohangId));
+                    }
+                });
+            }
+
+            if (selectedItems.length === 0) {
+
+                alert("Vui lòng chọn ít nhất một sản phẩm!");
+                return;
+            }
+
+            fetch('/ThanhToan/PrepareCheckout', {
+
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify({
+                    selectedItems: selectedItems
+                })
+
+            })
+
+            .then(response => response.json())
+
+            .then(data => {
+
+                if (data.success) {
+
+                    window.location.href =
+                        '@Url.Action("ThanhToan", "ThanhToan")';
+                }
+                else {
+
+                    alert(data.message ||
+                        "Có lỗi xảy ra!");
+                }
+            })
+
+            .catch(error => {
+
+                console.error(error);
+
+                alert("Có lỗi xảy ra!");
+            });
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var selectItems = document.querySelectorAll(".select-item");
+        if (selectItems && selectItems.length > 0) {
+            selectItems.forEach(checkbox => {
+
+                checkbox.checked = true;
+            });
+        }
+
+        var selectAllCheckbox = document.getElementById("select-all");
+        if (selectAllCheckbox) {
+            selectAllCheckbox.checked = true;
+        }
+
+        updateSelectedTotal();
+
+        fetch('/GioHang/GetCartCount', {
+
+            method: 'GET',
+
+            headers: {
+                'Content-Type': 'application/json'
+            }
+
+        })
+
+        .then(response => response.json())
+
+        .then(data => {
+
+            if (data.cartCount !== undefined) {
+                updateCartCount(data.cartCount);
+            }
+        });
+    });
+
+    function updateCartCount(count) {
+
+        var cartCountElement =
+            document.querySelector(".cart-count");
+
+        if (cartCountElement) {
+
+            cartCountElement.textContent =
+                count > 0 ? count : "";
+
+            cartCountElement.style.display =
+                count > 0 ? "inline-block" : "none";
+        }
+    }
+
+    // REMOVE
+    var removeButtons = document.querySelectorAll(".btn-xoa");
+    if (removeButtons && removeButtons.length > 0) {
+        removeButtons.forEach(button => {
+
+            button.addEventListener("click", function (e) {
+
+                e.preventDefault();
+
+                var productId = this.getAttribute("data-foodid");
+                var sizeId = this.getAttribute("data-sizeid");
+                var row = this.closest("tr");
+
+                if (!row) {
+                    console.error("Không tìm thấy row");
+                    return;
+                }
+
+                var toppingIds = [];
+                var toppingAttr = row.getAttribute("data-toppingids");
+                if (toppingAttr && toppingAttr !== "null" && toppingAttr !== "") {
+                    try {
+                        toppingIds = JSON.parse(toppingAttr);
+                    } catch(e) {
+                        console.error("Lỗi parse toppingIds:", e);
+                        toppingIds = [];
+                    }
+                }
+
+                if (sizeId === "0" || sizeId === "null" || sizeId === null || !sizeId) {
+                    sizeId = null;
+                }
+
+                if (confirm("Bạn có chắc muốn xóa sản phẩm này?")) {
+
+                    fetch('/GioHang/XoaKhoiGio', {
+
+                        method: 'POST',
+
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+
+                        body: JSON.stringify({
+
+                            foodId: parseInt(productId),
+
+                            sizeId: sizeId ? parseInt(sizeId) : null,
+
+                            toppingIds: toppingIds
+                        })
+
+                    })
+
+                    .then(response => response.json())
+
+                    .then(data => {
+
+                        if (data.success) {
+
+                            if (data.cartCount !== undefined) {
+                                updateCartCount(data.cartCount);
+                            }
+
+                            row.remove();
+
+                            var remainingRows = document.querySelectorAll("#cart-table tbody tr");
+                            if (remainingRows && remainingRows.length === 0) {
+
+                                var cartContent = document.getElementById("cart-content");
+                                if (cartContent) {
+                                    cartContent.style.display = "none";
+                                }
+
+                                var emptyMessage = document.getElementById("cart-empty-message");
+                                if (emptyMessage) {
+                                    emptyMessage.style.display = "block";
+                                }
+                            }
+
+                            updateSelectedTotal();
+                        }
+                        else {
+
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Lỗi fetch:", error);
+                        alert("Có lỗi xảy ra khi xóa sản phẩm!");
+                    });
+                }
+            });
+        });
+    }
+
+    // UPDATE QUANTITY
+    var quantityInputs = document.querySelectorAll(".soLuongInput");
+    if (quantityInputs && quantityInputs.length > 0) {
+        quantityInputs.forEach(input => {
+
+            input.addEventListener("change", function (e) {
+
+                var currentInput = e.target; // Lấy trực tiếp từ event
+                var foodId = currentInput.getAttribute("data-foodid");
+                var sizeId = currentInput.getAttribute("data-sizeid");
+
+                // Lấy giá trị an toàn
+                var soLuong = parseInt(currentInput.value);
+                if (isNaN(soLuong)) {
+                    soLuong = 1;
+                    currentInput.value = 1;
+                }
+
+                var row = currentInput.closest("tr");
+                if (!row) {
+                    console.error("Không tìm thấy row");
+                    return;
+                }
+
+                var toppingIds = [];
+                var toppingAttr = row.getAttribute("data-toppingids");
+                if (toppingAttr && toppingAttr !== "null" && toppingAttr !== "") {
+                    try {
+                        toppingIds = JSON.parse(toppingAttr);
+                    } catch(e) {
+                        console.error("Lỗi parse toppingIds:", e);
+                        toppingIds = [];
+                    }
+                }
+
+                if (soLuong < 1) {
+
+                    alert("Số lượng phải lớn hơn 0!");
+
+                    currentInput.value = 1;
+
+                    return;
+                }
+
+                if (sizeId === "0" || sizeId === "null" || sizeId === null || !sizeId) {
+
+                    sizeId = null;
+                }
+
+                currentInput.disabled = true;
+
+                fetch('/GioHang/CapNhatSoLuong', {
+
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+
+                    body: JSON.stringify({
+
+                        foodId: parseInt(foodId),
+
+                        sizeId: sizeId ? parseInt(sizeId) : null,
+
+                        soLuong: soLuong,
+
+                        toppingIds: toppingIds
+                    })
+
+                })
+
+                .then(response => response.json())
+
+                .then(data => {
+
+                    if (data.success) {
+
+                        if (data.cartCount !== undefined) {
+                            updateCartCount(data.cartCount);
+                        }
+
+                        var totalPriceCell = row.querySelector(".total-price");
+
+                        if (totalPriceCell && typeof data.newItemTotal === "number") {
+
+                            totalPriceCell.textContent = data.newItemTotal.toLocaleString("vi-VN") + " ₫";
+
+                            var checkbox = row.querySelector(".select-item");
+
+                            if (checkbox) {
+
+                                checkbox.setAttribute("data-totalprice", data.newItemTotal);
+                            }
+                        }
+
+                        updateSelectedTotal();
+                    }
+                    else {
+
+                        alert(data.message || "Không thể cập nhật!");
+
+                        currentInput.value = data.currentQuantity || 1;
+                    }
+                })
+
+                .catch(error => {
+
+                    console.error("Lỗi fetch:", error);
+
+                    alert("Có lỗi xảy ra!");
+
+                    currentInput.value = 1;
+                })
+
+                .finally(() => {
+
+                    currentInput.disabled = false;
+                });
+            });
+        });
+    }
+
+    </script>
+}

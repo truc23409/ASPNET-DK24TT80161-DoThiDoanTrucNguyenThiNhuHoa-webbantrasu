@@ -1,0 +1,212 @@
+﻿
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    color: #fff;
+}
+
+a {
+    text-decoration: none;
+    color: #fff;
+}
+
+img, video {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Logo dịch sát trái hơn */
+.logo-link {
+    text-align: left;
+    flex: 0 0 auto;
+    margin-right: 40px;
+}
+
+/* Phần logo chỉnh lại */
+.logo-middle {
+    font-family: 'Great Vibes', cursive;
+    font-size: 34px;
+    color: #fff;
+    margin-bottom: 2px;
+}
+
+.logo-bottom {
+    font-size: 14px;
+    letter-spacing: 5px;
+    color: #fff;
+}
+
+
+
+.nav ul {
+    list-style: none;
+    display: flex;
+    gap: 60px;
+    margin: 0;
+    padding: 0;
+}
+
+    .nav ul li a {
+        color: #fff;
+        font-weight: 600;
+        font-size: 20px;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        transition: color 0.3s;
+    }
+
+        .nav ul li a:hover {
+            color: #f5b0cb;
+        }
+
+.container {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 50px;
+}
+
+.user-info {
+    font-weight: bold;
+    color: #000;
+    margin-right: 10px;
+}
+
+/* About Section */
+.about {
+    background-color: #fff;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+    .about h2 {
+        color: #000;
+        margin-bottom: 20px;
+        font-size: 2rem;
+    }
+
+    .about p {
+        max-width: 800px;
+        margin: 0 auto;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #000;
+    }
+
+/* Footer */
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+
+
+.text-center p {
+    text-align: center;
+}
+/* Search Bar đẹp như Cốc Cốc */
+.search-bar {
+    flex: 1;
+    max-width: 500px; /* chỉnh max rộng hơn */
+}
+.search-bar form {
+    display: flex;
+    align-items: center;
+    background: #f1f3f4;
+    border-radius: 999px;
+    padding: 5px 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    width: 220px; /* cho dài hơn */
+    transition: width 0.3s ease;
+}
+
+.search-bar form:hover {
+    width: 280px; /* hover cho dài thêm tí */
+}
+
+.search-bar input {
+    border: none;
+    background: transparent;
+    outline: none;
+    flex: 1;
+    padding: 8px 5px;
+    font-size: 15px;
+    color: #333;
+}
+
+.search-bar input::placeholder {
+    color: #888;
+}
+
+.search-bar button {
+    background: none;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+}
+
+    .search-bar button:hover {
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+
+/* Nav căn giữa */
+.nav ul {
+    list-style: none;
+    display: flex;
+    gap: 45px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav ul li a {
+    color: #fff;
+    font-weight: 600;
+    font-size: 18px;
+}
+/* Đổi màu icon thành trắng */
+.dropdown-toggle i {
+    color: white;
+}
+
+/* Bỏ nền trắng của dropdown */
+.dropdown-menu {
+    background-color: transparent; /* Nền trong suốt */
+    box-shadow: none; /* Bỏ đổ bóng */
+    padding: 10px;
+    min-width: 150px;
+    z-index: 999;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+    /* Chỉnh màu chữ và bỏ gạch chân */
+    .dropdown-menu a {
+        display: block;
+        padding: 8px 12px;
+        color: white; /* Chữ màu trắng */
+        text-decoration: none; /* Bỏ gạch chân */
+        border-radius: 5px;
+    }
+
+        /* Hiệu ứng hover */
+        .dropdown-menu a:hover {
+            background-color: rgba(255, 255, 255, 0.2); /* Hiệu ứng hover nhẹ */
+            color: #fff;
+        }

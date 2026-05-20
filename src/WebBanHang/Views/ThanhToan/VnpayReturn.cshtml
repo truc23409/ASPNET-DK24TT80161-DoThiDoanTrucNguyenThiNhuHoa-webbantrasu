@@ -1,0 +1,67 @@
+﻿@{
+    ViewBag.Title = "Kết quả thanh toán VNPay";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container product_section_container" style="margin-top: 50px; margin-bottom: 50px;">
+    <div class="row">
+        <div class="col product_section clearfix">
+            <!-- Breadcrumbs -->
+            <div class="breadcrumbs d-flex flex-row align-items-center">
+                <ul>
+                    <li><a href="@Url.Action("Home", "Home")"> </a></li>
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <div class="row justify-content-center">
+                <div class="col-md-8 text-center">
+                    <div class="card shadow-sm p-4" style="border-radius: 15px;">
+                        <!-- Icon minh họa -->
+                        @if (ViewBag.InnerText != null && ViewBag.InnerText.ToString().Contains("thành công"))
+                        {
+                            <div class="mb-4">
+                                <i class="fas fa-check-circle" style="font-size: 60px; color: #28a745;"></i>
+                            </div>
+                            <h2 class="text-success mb-3">Thanh toán thành công!</h2>
+                        }
+                        else
+                        {
+                            <div class="mb-4">
+                                <i class="fas fa-exclamation-circle" style="font-size: 60px; color: #dc3545;"></i>
+                            </div>
+                            <h2 class="text-danger mb-3">Thanh toán thất bại!</h2>
+                        }
+
+                        <!-- Thông tin giao dịch -->
+                        @if (ViewBag.ThanhToanThanhCong != null)
+                        {
+                            <p class="lead">@ViewBag.ThanhToanThanhCong</p>
+                        }
+
+                        @if (ViewBag.OrderId != null)
+                        {
+                            <p class="text-muted">Mã đơn hàng của bạn: <strong>#@ViewBag.OrderId</strong></p>
+                        }
+
+                        <p>@ViewBag.InnerText</p>
+
+                        <!-- Nút hành động -->
+                        <div class="mt-4">
+                            <a href="@Url.Action("Home", "Home")" class="btn btn-primary mr-2">Quay lại trang chủ</a>
+                            @if (ViewBag.OrderId != null)
+                            {
+                                <a href="@Url.Action("TaiKhoan", "TaiKhoan", new { id = ViewBag.OrderId })" class="btn btn-outline-secondary">Xem chi tiết đơn hàng</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Đảm bảo Font Awesome được bao gồm để hiển thị icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+}

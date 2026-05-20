@@ -1,0 +1,469 @@
+﻿@model IEnumerable<WebBanHang.Models.Food>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- HERO BANNER -->
+<section class="banner">
+
+    <div id="carouselBanner" class="carousel slide" data-bs-ride="carousel">
+
+        <div class="carousel-inner">
+
+            <!-- Slide 1 -->
+            <div class="carousel-item active">
+                <video autoplay muted loop class="d-block w-100 banner-video">
+                    <source src="@Url.Content("~/video/vd6.mp4")" type="video/mp4" />
+                </video>
+
+                <div class="banner-overlay">
+                    <h1>Rosabelle Tea ✨</h1>
+                    <p>
+                        A soft place for soft hearts 🌸
+                    </p>
+                </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="carousel-item">
+                <video autoplay muted loop class="d-block w-100 banner-video">
+                    <source src="@Url.Content("~/video/vd.mp4")" type="video/mp4" />
+                </video>
+
+                <div class="banner-overlay">
+                    <h1>Sweet & Lovely</h1>
+                    <p>
+                        Coffee, cakes and cute little moments 💖
+                    </p>
+                </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="carousel-item">
+                <video autoplay muted loop class="d-block w-100 banner-video">
+                    <source src="@Url.Content("~/video/vd2.mp4")" type="video/mp4" />
+                </video>
+
+                <div class="banner-overlay">
+                    <h1>Made With Love</h1>
+                    <p>
+                        Sip sweetness slowly ☁️
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Controls -->
+        <button class="carousel-control-prev"
+                type="button"
+                data-bs-target="#carouselBanner"
+                data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+
+        <button class="carousel-control-next"
+                type="button"
+                data-bs-target="#carouselBanner"
+                data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+
+    </div>
+
+</section>
+
+<!-- INTRO SECTION -->
+<section class="intro-section">
+
+    <div class="intro-content">
+
+        <span class="mini-title">
+            Welcome to Rosabelle Tea
+        </span>
+
+        <h2>
+            Một chút ngọt ngào cho những ngày dịu dàng 🌷
+        </h2>
+
+        <p>
+            Rosabelle Tea là không gian dành cho những cô gái yêu sự nhẹ nhàng,
+            thích những ly trà thơm, bánh ngọt mềm và những góc nhỏ thật xinh để thư giãn.
+            <br /><br />
+
+            Chúng tôi mong rằng mỗi lần bạn ghé Rosabelle,
+            sẽ luôn tìm thấy một chút bình yên và thật nhiều khoảnh khắc đáng yêu.
+        </p>
+
+    </div>
+
+</section>
+
+<!-- BEST SELLER -->
+<section class="best-seller-section">
+
+    <div class="section-title">
+
+        <h2>
+            ✨ BEST SELLER MENU ✨
+        </h2>
+
+    </div>
+
+    <div class="container mt-5">
+
+        <div id="carouselBestSellers"
+             class="carousel slide"
+             data-bs-ride="carousel">
+
+            <div class="carousel-inner">
+
+                @if (ViewBag.BanChay is List<WebBanHang.Models.BanChayModel> bestSellers && bestSellers.Any())
+                {
+                    int itemsPerSlide = 4;
+                    int totalItems = bestSellers.Count;
+                    int slideIndex = 0;
+
+                    for (int i = 0; i < totalItems; i += itemsPerSlide)
+                    {
+                        var itemsInThisSlide = bestSellers.Skip(i).Take(itemsPerSlide).ToList();
+
+                        <div class="carousel-item @(slideIndex == 0 ? "active" : "")">
+
+                            <div class="row justify-content-center">
+
+                                @foreach (var item in itemsInThisSlide)
+                                {
+                                    <div class="col-md-3 d-flex justify-content-center">
+
+                                        <div class="product-card">
+
+                                            <div class="product-image-wrapper">
+
+                                                <img src="@(!string.IsNullOrEmpty(item.ImageUrl)
+                                                ? item.ImageUrl
+                                                : Url.Content("~/Images/no-image.png"))" />
+
+                                            </div>
+
+                                            <div class="product-content">
+
+                                                <h5>@item.FoodName</h5>
+
+                                                <p class="price">
+                                                    @item.Price.ToString("N0")đ
+                                                </p>
+
+                                                <p class="sold">
+                                                    💖 Đã bán: @item.TotalSold
+                                                </p>
+
+                                                <a href="@Url.Action("ChiTiet", "SanPham", new { id = item.FoodId })"
+                                                   class="btn-buy">
+                                                    Xem chi tiết
+                                                </a>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                }
+
+                            </div>
+
+                        </div>
+
+                        slideIndex++;
+                    }
+                }
+                else
+                {
+                    <p class="text-center text-danger">
+                        Không có dữ liệu
+                    </p>
+                }
+
+            </div>
+
+            <!-- Controls -->
+            <button class="carousel-control-prev"
+                    type="button"
+                    data-bs-target="#carouselBestSellers"
+                    data-bs-slide="prev">
+
+                <span class="carousel-control-prev-icon"></span>
+
+            </button>
+
+            <button class="carousel-control-next"
+                    type="button"
+                    data-bs-target="#carouselBestSellers"
+                    data-bs-slide="next">
+
+                <span class="carousel-control-next-icon"></span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- SMALL QUOTE -->
+<section class="quote-section">
+
+    <div class="quote-box">
+
+        <h3>
+            “Sweet moments, softer days.”
+        </h3>
+
+        <p>
+            Rosabelle Tea hopes every visit feels like a tiny escape from the busy world 💕
+        </p>
+
+    </div>
+
+</section>
+
+<style>
+
+    body {
+        background: #fffaf8;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    /* BANNER */
+
+    .banner {
+        width: 100%;
+        overflow: hidden;
+        margin-bottom: 70px;
+    }
+
+    .banner-video {
+        width: 100%;
+        height: 700px;
+        object-fit: cover;
+        filter: brightness(0.75);
+    }
+
+    .carousel-item {
+        position: relative;
+    }
+
+    .banner-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: white;
+        z-index: 10;
+    }
+
+        .banner-overlay h1 {
+            font-size: 72px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 20px rgba(255, 111, 143, 0.4);
+            color: white;
+        }
+
+        .banner-overlay p {
+            font-size: 20px;
+            letter-spacing: 1px;
+            color: white;
+        }
+
+    /* INTRO */
+
+    .intro-section {
+        padding: 0 10% 80px;
+    }
+
+    .intro-content {
+        background: white;
+        border-radius: 35px;
+        padding: 60px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    .mini-title {
+        color: #d9a5b3;
+        letter-spacing: 3px;
+        font-size: 13px;
+        text-transform: uppercase;
+    }
+
+    .intro-content h2 {
+        color: #5d4c54;
+        margin-top: 20px;
+        font-size: 40px;
+        font-weight: 700;
+    }
+
+    .intro-content p {
+        color: #777;
+        margin-top: 25px;
+        line-height: 2;
+        font-size: 16px;
+    }
+
+    /* SECTION TITLE */
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+        .section-title span {
+            color: #d9a5b3;
+            letter-spacing: 3px;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        .section-title h2 {
+            margin-top: 15px;
+            color: #5d4c54;
+            font-size: 38px;
+            font-weight: 700;
+        }
+
+    /* BEST SELLER */
+
+    .best-seller-section {
+        padding: 20px 0 80px;
+    }
+
+    .product-card {
+        width: 270px;
+        background: white;
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+        transition: 0.3s;
+        height: 100%;
+    }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+        }
+
+    .product-image-wrapper {
+        overflow: hidden;
+    }
+
+        .product-image-wrapper img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: 0.4s;
+        }
+
+    .product-card:hover img {
+        transform: scale(1.05);
+    }
+
+    .product-content {
+        padding: 22px;
+    }
+
+        .product-content h5 {
+            color: #5d4c54;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+    .price {
+        color: #d88ca0;
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .sold {
+        color: #888;
+        font-size: 14px;
+    }
+
+    .btn-buy {
+        display: inline-block;
+        margin-top: 18px;
+        background: #f8dbe4;
+        color: #7b5b65;
+        padding: 10px 25px;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .btn-buy:hover {
+            background: #efc3d0;
+            color: #7b5b65;
+        }
+
+    /* QUOTE */
+
+    .quote-section {
+        padding: 0 10% 100px;
+    }
+
+    .quote-box {
+        background: linear-gradient(135deg, #ffe8ef, #fff5f8);
+        border-radius: 35px;
+        padding: 60px;
+        text-align: center;
+    }
+
+        .quote-box h3 {
+            color: #d88ca0;
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .quote-box p {
+            color: #777;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+    /* RESPONSIVE */
+
+    @@media(max-width: 768px) {
+
+        .banner-video {
+            height: 500px;
+        }
+
+        .banner-overlay h1 {
+            font-size: 42px;
+        }
+
+        .banner-overlay p {
+            font-size: 16px;
+        }
+
+        .intro-content {
+            padding: 35px;
+        }
+
+            .intro-content h2 {
+                font-size: 28px;
+            }
+
+        .quote-box {
+            padding: 35px;
+        }
+
+            .quote-box h3 {
+                font-size: 24px;
+            }
+    }
+</style>

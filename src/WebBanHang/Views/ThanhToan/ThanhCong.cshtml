@@ -1,0 +1,117 @@
+﻿@{
+    ViewBag.Title = "Đặt hàng thành công";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="checkout-success-wrapper">
+    <div class="checkout-success-popup">
+        <div class="success-icon">✔</div>
+        <h2>Successful!</h2>
+        <p> Bạn đã đặt hàng thành công. </p>
+        <p> Kiểm tra danh sách đơn hàng của bạn để biết chi tiết.</p>
+        <div class="button-group">
+            <a href="@Url.Action("Home", "Home")" class="btn btn-home">Quay lại Trang chủ</a>
+            <a href="@Url.Action("SanPham", "SanPham")" class="btn btn-continue">Tiếp tục mua sắm</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-image: url('/images/nen4.png'); /* Thay ảnh nếu khác tên */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .checkout-success-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        backdrop-filter: blur(4px);
+    }
+
+    .checkout-success-popup {
+        background: rgba(255, 255, 255, 0.85);
+        padding: 40px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        max-width: 500px;
+        width: 90%;
+        text-align: center;
+    }
+
+        .checkout-success-popup * {
+            text-align: center;
+        }
+
+    .success-icon {
+        font-size: 60px;
+        color: #28a745;
+        margin-bottom: 20px;
+        animation: bounce 0.6s;
+        transform: scale(1);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    h2 {
+        color: #28a745;
+        font-size: 28px;
+        margin-bottom: 15px;
+    }
+
+    p {
+        color: #333;
+        font-size: 16px;
+        margin-bottom: 25px;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: 15px;
+        cursor: pointer;
+        text-decoration: none;
+        color: #fff;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-home {
+        background-color: #6c757d;
+    }
+
+        .btn-home:hover {
+            background-color: #5a6268;
+        }
+
+    .btn-continue {
+        background-color: #28a745;
+    }
+
+        .btn-continue:hover {
+            background-color: #218838;
+        }
+
+    .checkout-success-popup:hover .success-icon {
+        transform: scale(1.1);
+    }
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const popup = document.querySelector('.checkout-success-popup');
+        if (popup) {
+            popup.classList.add('loaded');
+        }
+    });
+</script>

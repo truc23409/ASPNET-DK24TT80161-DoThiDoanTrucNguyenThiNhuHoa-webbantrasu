@@ -1,0 +1,76 @@
+﻿@{
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+    ViewBag.Title = "Forgot Password";
+}
+
+<div class="forgot-container">
+    <h2>Forgot Password</h2>
+    <p>Enter your Email or Phone number to reset your password</p>
+
+    @using (Html.BeginForm("Forgot", "Forgot", FormMethod.Post))
+    {
+        <div class="input-group">
+            <input type="text" name="identifier" placeholder="Enter Email or Phone" required />
+        </div>
+
+        <input type="submit" class="btn-login" value="Send Reset Link / OTP" />
+    }
+
+    @if (ViewBag.Message != null)
+    {
+        <p class="message-error">@ViewBag.Message</p>
+    }
+</div>
+
+<style>
+    .forgot-container {
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.01);
+        backdrop-filter: blur(8px);
+        font-family: Arial, sans-serif;
+    }
+
+        .forgot-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+    .input-group {
+        margin-bottom: 15px;
+    }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+    .btn-login {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+        .btn-login:hover {
+            background-color: #45a049;
+        }
+
+    .message-error {
+        color: red;
+        text-align: center;
+        margin-top: 10px;
+    }
+</style>

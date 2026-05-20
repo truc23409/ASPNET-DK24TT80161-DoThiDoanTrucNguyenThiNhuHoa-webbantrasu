@@ -1,0 +1,564 @@
+﻿@model IEnumerable<WebBanHang.Models.Food>
+
+@{
+    ViewBag.Title = "Menu Rosabelle Tea";
+}
+
+<!-- HERO BANNER -->
+<section class="banner">
+
+    <div id="carouselBanner"
+         class="carousel slide"
+         data-bs-ride="carousel">
+
+        <div class="carousel-inner">
+
+            <div class="carousel-item active">
+
+                <video autoplay muted loop class="d-block w-100 banner-video">
+                    <source src="@Url.Content("~/video/vd6.mp4")" type="video/mp4" />
+                </video>
+
+                <div class="banner-overlay">
+
+                    <span class="mini-title">
+                        Rosabelle Tea ✨
+                    </span>
+
+                    <h1>
+                        Lovely Drinks & Sweet Moments
+                    </h1>
+
+                    <p>
+                        Coffee • Tea • Cakes • Cute little happiness 🌸
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- PAGE TITLE -->
+<section class="menu-header-page">
+
+    <span>Our Menu</span>
+
+    <p>
+        Chọn một chút ngọt ngào cho ngày hôm nay ✨
+    </p>
+
+</section>
+
+<!-- MAIN CONTENT -->
+<div class="product-page">
+
+    <!-- CATEGORY -->
+    <div class="category-menu-vertical">
+
+        <div class="category-box">
+
+            <h3>
+                Danh mục 🌷
+            </h3>
+
+            <ul class="list-group">
+
+                <li class="list-group-item active">
+                    <a href="@Url.Action("SanPham", "SanPham")">
+                        ✨ Tất cả
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="@Url.Action("SanPham", "SanPham", new { categoryId = 1 })">
+                        ☕ Cà phê
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="@Url.Action("SanPham", "SanPham", new { categoryId = 2 })">
+                        🧋 Trà sữa
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="@Url.Action("SanPham", "SanPham", new { categoryId = 3 })">
+                        ❄️ Đá xay
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="@Url.Action("SanPham", "SanPham", new { categoryId = 4 })">
+                        🍰 Bánh & Snack
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="@Url.Action("SanPham", "SanPham", new { categoryId = 5 })">
+                        🍓 Trà trái cây
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+    <!-- PRODUCT -->
+    <div class="product-container">
+
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <div class="product-card">
+
+                    <a href="@Url.Action("ChiTiet", "SanPham", new { id = item.FoodId })"
+                       class="product-link">
+
+                        <div class="image-wrapper">
+
+                            <img src="@Url.Content(item.ImageURL)"
+                                 alt="@item.FoodName"
+                                 class="product-image" />
+
+                        </div>
+
+                        <div class="product-content">
+
+                            <h4 class="product-title">
+                                @item.FoodName
+                            </h4>
+
+                            <p class="product-desc">
+                                @item.Description
+                            </p>
+
+                            <p class="price">
+                                @String.Format("{0:N0} ₫", item.Price)
+                            </p>
+
+                            <button class="view-btn">
+                                Xem chi tiết
+                            </button>
+
+                        </div>
+
+                    </a>
+
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-product">
+
+                <h3>
+                    🌸 Oops!
+                </h3>
+
+                <p>
+                    Không có sản phẩm nào phù hợp với tìm kiếm của bạn.
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+<!-- PAGINATION -->
+<div class="pagination-container">
+
+    <nav aria-label="Page navigation">
+
+        <ul class="pagination justify-content-center">
+
+            <li class="page-item @((ViewBag.CurrentPage == 1) ? "disabled" : "")">
+
+                <a class="page-link"
+                   href="@Url.Action("SanPham", new {
+                   searchString = Request.QueryString["searchString"],
+                   categoryId = Request.QueryString["categoryId"],
+                   page = ViewBag.CurrentPage - 1
+                   })">
+
+                    &laquo;
+
+                </a>
+
+            </li>
+
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+
+                    <a class="page-link"
+                       href="@Url.Action("SanPham", new {
+                       searchString = Request.QueryString["searchString"],
+                       categoryId = Request.QueryString["categoryId"],
+                       page = i
+                       })">
+
+                        @i
+
+                    </a>
+
+                </li>
+            }
+
+            <li class="page-item @((ViewBag.CurrentPage == ViewBag.TotalPages) ? "disabled" : "")">
+
+                <a class="page-link"
+                   href="@Url.Action("SanPham", new {
+                   searchString = Request.QueryString["searchString"],
+                   categoryId = Request.QueryString["categoryId"],
+                   page = ViewBag.CurrentPage + 1
+                   })">
+
+                    &raquo;
+
+                </a>
+
+            </li>
+
+        </ul>
+
+    </nav>
+
+</div>
+
+<style>
+
+    body {
+        background: #fffaf8;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    /* BANNER */
+
+    .banner {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .banner-video {
+        width: 100%;
+        height: 550px;
+        object-fit: cover;
+        filter: brightness(0.7);
+    }
+
+    .carousel-item {
+        position: relative;
+    }
+
+    .banner-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: white;
+    }
+
+    .mini-title {
+        font-size: 14px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+    }
+
+    .banner-overlay h1 {
+        font-size: 68px;
+        font-weight: 700;
+        margin: 20px 0;
+        color: white;
+    }
+
+    .banner-overlay p {
+        font-size: 18px;
+        color: white;
+    }
+
+    /* MENU HEADER */
+
+    .menu-header-page {
+        text-align: center;
+        margin: 0 auto 70px auto;
+        max-width: 900px;
+        padding: 0 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .menu-header-page span {
+            color: #d9a5b3;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .menu-header-page h2 {
+            font-size: 52px;
+            color: #5d4c54;
+            font-weight: 700;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .menu-header-page p {
+            color: #888;
+            font-size: 17px;
+            line-height: 1.8;
+            text-align: center;
+            max-width: 650px;
+        }
+
+    /* LAYOUT */
+
+    .product-page {
+        display: flex;
+        gap: 50px;
+        padding: 0 5% 100px;
+        align-items: flex-start;
+    }
+
+    /* CATEGORY */
+
+    .category-menu-vertical {
+        width: 280px;
+        position: sticky;
+        top: 100px;
+    }
+
+    .category-box {
+        background: white;
+        padding: 30px;
+        border-radius: 30px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+
+        .category-box h3 {
+            color: #d88ca0;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+
+    .list-group {
+        gap: 15px;
+    }
+
+    .list-group-item {
+        border: none;
+        background: #fff4f7;
+        border-radius: 16px !important;
+        transition: 0.3s;
+        padding: 15px 18px;
+    }
+
+        .list-group-item a {
+            color: #7b5b65;
+            font-weight: 500;
+            display: block;
+        }
+
+        .list-group-item:hover {
+            background: #f7d6e0;
+        }
+
+        .list-group-item.active {
+            background: #f3c4d1;
+        }
+
+            .list-group-item.active a {
+                color: #6a4d56;
+                font-weight: 600;
+            }
+
+    /* PRODUCT GRID */
+
+    .product-container {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(320px, 1fr));
+        gap: 40px;
+    }
+
+    /* PRODUCT CARD */
+
+    .product-card {
+        background: white;
+        border-radius: 32px;
+        overflow: hidden;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+        transition: 0.35s ease;
+        width: 100%;
+        min-height: 520px;
+    }
+
+        .product-card:hover {
+            transform: translateY(-12px);
+        }
+
+    .image-wrapper {
+        overflow: hidden;
+    }
+
+    .product-image {
+        width: 100%;
+        height: 330px;
+        object-fit: cover;
+        transition: 0.4s;
+    }
+
+    .product-card:hover .product-image {
+        transform: scale(1.06);
+    }
+
+    /* CONTENT */
+
+    .product-content {
+        padding: 28px;
+    }
+
+    .product-title {
+        color: #5d4c54;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        line-height: 1.5;
+    }
+
+    .product-desc {
+        color: #999;
+        font-size: 15px;
+        line-height: 1.8;
+        min-height: 60px;
+    }
+
+    .price {
+        color: #d88ca0;
+        font-size: 28px;
+        font-weight: bold;
+        margin: 22px 0;
+    }
+
+    .view-btn {
+        width: 100%;
+        border: none;
+        background: #f8dbe4;
+        color: #7b5b65;
+        padding: 15px;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 15px;
+        transition: 0.3s;
+    }
+
+        .view-btn:hover {
+            background: #efc3d0;
+        }
+
+    /* EMPTY */
+
+    .empty-product {
+        background: white;
+        padding: 50px;
+        border-radius: 30px;
+        text-align: center;
+        width: 100%;
+    }
+
+        .empty-product h3 {
+            color: #d88ca0;
+            margin-bottom: 15px;
+        }
+
+    /* PAGINATION */
+
+    .pagination-container {
+        padding-bottom: 80px;
+    }
+
+    .pagination .page-link {
+        border: none;
+        margin: 0 5px;
+        border-radius: 12px;
+        color: #7b5b65;
+        background: #fff0f4;
+        padding: 12px 18px;
+    }
+
+    .pagination .active .page-link {
+        background: #f3c4d1;
+        color: #6a4d56;
+    }
+
+    /* RESPONSIVE */
+
+    @@media(max-width: 1400px) {
+
+        .product-container {
+            grid-template-columns: repeat(2, minmax(300px, 1fr));
+        }
+    }
+
+    @@media(max-width: 992px) {
+
+        .product-page {
+            flex-direction: column;
+        }
+
+        .category-menu-vertical {
+            width: 100%;
+            position: relative;
+            top: unset;
+        }
+
+        .product-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media(max-width: 768px) {
+
+        .banner-video {
+            height: 420px;
+        }
+
+        .banner-overlay h1 {
+            font-size: 40px;
+        }
+
+        .menu-header-page h2 {
+            font-size: 36px;
+        }
+
+        .product-container {
+            grid-template-columns: 1fr;
+        }
+
+        .product-image {
+            height: 260px;
+        }
+
+        .product-card {
+            min-height: unset;
+        }
+    }
+</style>

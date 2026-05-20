@@ -1,0 +1,70 @@
+﻿/* General Styling */
+.container {
+    width: 80%;
+    margin: auto;
+}
+
+/* About Section */
+.about-us {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 60px 0;
+}
+
+.about-logo img {
+    width: 150px;
+}
+
+.about-text h2 {
+    color: #e83e8c;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.about-text p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Mission Section */
+.mission {
+    background-color: #fff4f8;
+    padding: 50px 0;
+    text-align: center;
+}
+
+    .mission h2 {
+        color: #e83e8c;
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .mission p {
+        font-size: 1.2rem;
+        color: #444;
+    }
+
+    .mission .btn {
+        background-color: #e83e8c;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1rem;
+        color: #fff;
+        cursor: pointer;
+        margin-top: 15px;
+    }
+
+/* Contact Section */
+.contact {
+    background: #222;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+}
+
+    .contact h2 {
+        margin-bottom: 10px;
+        font-size: 1.5rem;
+    }

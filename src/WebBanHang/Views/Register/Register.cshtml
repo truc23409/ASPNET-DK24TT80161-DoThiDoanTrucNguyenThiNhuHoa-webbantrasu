@@ -1,0 +1,475 @@
+﻿@{
+    Layout = "~/Views/Shared/_RegisterLayout.cshtml";
+    ViewBag.Title = "Register";
+}
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, #fff0f5, #ffe4ec);
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .register-wrapper {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+    }
+
+    .form-section {
+        width: 100%;
+        max-width: 520px;
+    }
+
+    .register-container {
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 25px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(255, 105, 135, 0.15);
+        border: 1px solid rgba(255,255,255,0.4);
+    }
+
+        .register-container h2 {
+            text-align: center;
+            font-size: 38px;
+            font-weight: 700;
+            color: #d85b7f;
+            margin-bottom: 10px;
+        }
+
+    .subtitle {
+        text-align: center;
+        color: #999;
+        margin-bottom: 30px;
+        font-size: 15px;
+    }
+
+    .input-group {
+        position: relative;
+        margin-bottom: 18px;
+    }
+
+        .input-group i:first-child {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: #d98aa0;
+            font-size: 16px;
+        }
+
+        .input-group input {
+            width: 100%;
+            height: 52px;
+            border-radius: 15px;
+            border: 1px solid #f3c6d4;
+            padding: 0 45px;
+            font-size: 15px;
+            background: #fffafb;
+            transition: all 0.3s ease;
+        }
+
+            .input-group input:focus {
+                outline: none;
+                border-color: #ff8fb1;
+                box-shadow: 0 0 0 4px rgba(255, 143, 177, 0.15);
+                background: white;
+            }
+
+    .toggle-password {
+        position: absolute;
+        top: 50%;
+        right: 15px;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #c48a9b;
+    }
+
+    .btn-register {
+        width: 100%;
+        height: 52px;
+        border: none;
+        border-radius: 30px;
+        background: linear-gradient(135deg, #ff8fb1, #d86b8f);
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 10px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(216, 107, 143, 0.35);
+        }
+
+    .or-divider {
+        text-align: center;
+        margin: 25px 0;
+        position: relative;
+    }
+
+        .or-divider span {
+            background: white;
+            padding: 0 15px;
+            color: #aaa;
+            position: relative;
+            z-index: 2;
+        }
+
+        .or-divider::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: #eee;
+            z-index: 1;
+        }
+
+    .social-btn {
+        width: 100%;
+        height: 50px;
+        border: none;
+        border-radius: 14px;
+        margin-bottom: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s ease;
+    }
+
+        .social-btn i {
+            margin-right: 8px;
+        }
+
+    .facebook {
+        background: #1877f2;
+        color: white;
+    }
+
+        .facebook:hover {
+            background: #0f63d8;
+        }
+
+    .google {
+        background: white;
+        border: 1px solid #eee;
+        color: #444;
+    }
+
+        .google:hover {
+            background: #f7f7f7;
+        }
+
+    .signin {
+        text-align: center;
+        margin-top: 20px;
+        color: #777;
+    }
+
+        .signin a {
+            color: #d85b7f;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .signin a:hover {
+                text-decoration: underline;
+            }
+
+    .error-message {
+        display: block;
+        color: #e53935;
+        font-size: 13px;
+        margin-top: -10px;
+        margin-bottom: 12px;
+        padding-left: 5px;
+    }
+
+    .alert-danger {
+        border-radius: 14px;
+        border: none;
+        background: #ffe5e9;
+        color: #d63055;
+        padding: 12px 15px;
+        margin-bottom: 20px;
+    }
+
+    @@media(max-width: 576px) {
+        .register-container {
+            padding: 30px 20px;
+        }
+
+            .register-container h2 {
+                font-size: 30px;
+            }
+    }
+</style>
+
+<div class="register-wrapper">
+    <div class="form-section">
+        <div class="register-container">
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger">
+                    @ViewBag.Error
+                </div>
+            }
+
+            <h2>Rosabelle Tea</h2>
+            <p class="subtitle">Create your account to continue</p>
+
+            @using (Html.BeginForm("Register", "Register", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+
+                    <input type="text"
+                           id="username"
+                           name="Username"
+                           placeholder="Username"
+                           value="@Request["Username"]"
+                           required />
+                </div>
+
+                <span id="username-error" class="error-message"></span>
+
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+
+                    <input type="email"
+                           id="email"
+                           name="Email"
+                           placeholder="Email"
+                           value="@Request["Email"]"
+                           required />
+                </div>
+
+                <span id="email-error" class="error-message"></span>
+
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+
+                    <input type="password"
+                           id="password"
+                           name="Password"
+                           placeholder="Password"
+                           required />
+
+                    <i class="fas fa-eye toggle-password"
+                       onclick="togglePassword()"></i>
+                </div>
+
+                <span id="password-error" class="error-message"></span>
+
+                <div class="input-group">
+                    <i class="fas fa-user-circle"></i>
+
+                    <input type="text"
+                           id="fullname"
+                           name="FullName"
+                           placeholder="Full Name"
+                           value="@Request["FullName"]"
+                           required />
+                </div>
+
+                <span id="fullname-error" class="error-message"></span>
+
+                <div class="input-group">
+                    <i class="fas fa-phone"></i>
+
+                    <input type="text"
+                           id="phone"
+                           name="PhoneNumber"
+                           placeholder="Phone"
+                           value="@Request["PhoneNumber"]"
+                           maxlength="10"
+                           required />
+                </div>
+
+                <span id="phone-error" class="error-message"></span>
+
+                <div class="input-group">
+                    <i class="fas fa-map-marker-alt"></i>
+
+                    <input type="text"
+                           id="address"
+                           name="Address"
+                           placeholder="Address"
+                           value="@Request["Address"]"
+                           required />
+                </div>
+
+                <span id="address-error" class="error-message"></span>
+
+                <input type="submit"
+                       class="btn-register"
+                       value="Sign Up" />
+            }
+
+            <div class="signin">
+                Already have an account?
+                <a href="@Url.Action("Login", "Login")">
+                    Sign In
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+
+        function togglePassword() {
+
+            var pwd = document.getElementById("password");
+            var icon = document.querySelector(".toggle-password");
+
+            if (!pwd || !icon) return;
+
+            if (pwd.type === "password") {
+
+                pwd.type = "text";
+
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+
+            } else {
+
+                pwd.type = "password";
+
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // Email Validate
+            const emailInput = document.getElementById('email');
+            const emailError = document.getElementById('email-error');
+
+            emailInput.addEventListener('blur', function () {
+
+                const emailPattern =
+                    /^[a-zA-Z0-9._%+\-]+@@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+
+                if (!emailPattern.test(emailInput.value.trim())) {
+
+                    emailError.textContent = "Email không hợp lệ.";
+
+                } else {
+
+                    emailError.textContent = "";
+                }
+            });
+
+            // Password Validate
+            const passwordInput = document.getElementById('password');
+            const passwordError = document.getElementById('password-error');
+
+            passwordInput.addEventListener('blur', function () {
+
+                const passwordPattern =
+                    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d!@@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,40}$/;
+
+                if (!passwordPattern.test(passwordInput.value)) {
+
+                    passwordError.textContent =
+                        "Mật khẩu phải từ 8-40 ký tự, gồm chữ, số và ký tự đặc biệt.";
+
+                } else {
+
+                    passwordError.textContent = "";
+                }
+            });
+
+            // Username Validate
+            const usernameInput = document.getElementById('username');
+            const usernameError = document.getElementById('username-error');
+
+            usernameInput.addEventListener('blur', function () {
+
+                const value = usernameInput.value.trim();
+
+                if (value.length < 3 || value.length > 30) {
+
+                    usernameError.textContent =
+                        "Username phải từ 3 đến 30 ký tự.";
+
+                } else {
+
+                    usernameError.textContent = "";
+                }
+            });
+
+            // Fullname Validate
+            const fullnameInput = document.getElementById('fullname');
+            const fullnameError = document.getElementById('fullname-error');
+
+            fullnameInput.addEventListener('blur', function () {
+
+                if (fullnameInput.value.trim() === "") {
+
+                    fullnameError.textContent =
+                        "Vui lòng nhập họ tên.";
+
+                } else {
+
+                    fullnameError.textContent = "";
+                }
+            });
+
+            // Phone Validate
+            const phoneInput = document.getElementById('phone');
+            const phoneError = document.getElementById('phone-error');
+
+            phoneInput.addEventListener('blur', function () {
+
+                const phoneValue = phoneInput.value.trim();
+
+                const phonePattern =
+                    /^(0(3|5|7|8|9))[0-9]{8}$/;
+
+                if (!phonePattern.test(phoneValue)) {
+
+                    phoneError.textContent =
+                        "Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 03, 05, 07, 08, 09.";
+
+                } else {
+
+                    phoneError.textContent = "";
+                }
+            });
+
+            // Address Validate
+            const addressInput = document.getElementById('address');
+            const addressError = document.getElementById('address-error');
+
+            addressInput.addEventListener('blur', function () {
+
+                if (addressInput.value.trim() === "") {
+
+                    addressError.textContent =
+                        "Vui lòng nhập địa chỉ.";
+
+                } else {
+
+                    addressError.textContent = "";
+                }
+            });
+
+        });
+
+    </script>
+}

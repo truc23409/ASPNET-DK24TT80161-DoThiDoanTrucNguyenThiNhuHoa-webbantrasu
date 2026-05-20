@@ -1,0 +1,504 @@
+﻿@model WebBanHang.Models.User
+@using WebBanHang.Models
+@{
+    ViewBag.Title = "Billing details";
+    var cartItems = ViewBag.CartItems as List<GioHang>;
+    var totalAmount = ViewBag.TotalAmount;
+    var orderDate = ViewBag.OrderDate ?? DateTime.Now;
+}
+
+<div class="billing-details">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <form id="profile-form" method="post" action="@Url.Action("UpdateUser", "ThanhToan")" class="billing-form">
+                    <div class="form-group">
+                        <label>Username*</label>
+                        <input type="text" id="username" class="form-control" value="@Model.Username" readonly />
+                        <span id="username-error" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>FullName*</label>
+                        <input type="text" id="fullname" class="form-control" name="FullName" value="@Model.FullName" required />
+                        <span id="fullname-error" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email*</label>
+                        <input type="email" id="email" class="form-control" name="Email" value="@Model.Email" required />
+                        <span id="email-error" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone Number*</label>
+                        <input type="text" id="phone" class="form-control" name="Phone" value="@Model.Phone" required />
+                        <span id="phone-error" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Address*</label>
+                        <input type="text" id="address" class="form-control" name="Address" value="@Model.Address" required />
+                        <span id="address-error" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary billing-button">Cập nhật</button>
+                </form>
+
+                <form action="@Url.Action("ThanhToan", "ThanhToan")" method="post" style="margin-top: 20px;" class="billing-form">
+                    <div class="form-group">
+                        <label>Địa chỉ giao hàng*</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <select name="address" id="delivery-address" class="form-control" required style="flex: 1;">
+                                <option value="" disabled selected>Chọn địa chỉ giao hàng</option>
+                                @foreach (var addr in ViewBag.DeliveryAddresses as List<WebBanHang.Models.DeliveryAddress>)
+                                {
+                                    <option value="@addr.AddressId" @(addr.IsDefault ? "selected" : "")>@addr.Address @(addr.IsDefault ? "(Mặc định)" : "")</option>
+                                }
+                                <option value="new">Thêm địa chỉ mới</option>
+                            </select>
+                            <button type="button" id="update-address-btn" class="btn btn-primary" style="padding: 8px 15px;">Cập nhật</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="new-address-group" style="display: none;">
+                        <label>Địa chỉ mới*</label>
+                        <input type="text" class="form-control" name="newAddress" id="new-address" placeholder="Nhập địa chỉ mới" />
+                        <span id="new-address-error" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group payment-methods">
+                        <h4>Phương thức thanh toán*</h4>
+                        @if (ViewBag.PaymentMethods != null && (ViewBag.PaymentMethods as List<WebBanHang.Models.PhuongThucThanhToan>).Count > 0)
+                        {
+                            foreach (var pm in ViewBag.PaymentMethods as List<WebBanHang.Models.PhuongThucThanhToan>)
+                            {
+                                <div class="form-check">
+                                    <input type="radio" name="paymentMethodId" value="@pm.Id"
+                                           @(pm.Id == 1 ? "checked" : "") required />
+                                    <label>@pm.TenPhuongThuc</label>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-danger">Không có phương thức thanh toán nào! Vui lòng liên hệ quản trị viên.</p>
+                        }
+                    </div>
+
+                    <button type="submit" class="btn btn-primary billing-button">PLACE ORDER</button>
+                </form>
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger mt-3">@TempData["Error"]</div>
+                }
+            </div>
+
+            <div class="col-md-6 sidebar-checkout">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Products</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in cartItems)
+                        {
+                            <tr>
+                                <td><img src="@(string.IsNullOrEmpty(item.Food.ImageURL) ? Url.Content("~/images/no-image.png") : Url.Content(item.Food.ImageURL))" width="50" alt="@item.Food.FoodName" /></td>
+                                <td>@item.Food.FoodName @(item.Size != null ? $"({item.Size.SizeName})" : "")</td>
+                                <td>@((item.TotalPrice / item.SoLuong).ToString("N0")) đ</td>
+                                <td>@item.SoLuong</td>
+                                <td>@item.TotalPrice.ToString("N0") đ</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <div class="summary">
+                    <p>Subtotal: @totalAmount.ToString("N0") đ</p>
+                    <p>Shipping: 20,000 đ</p>
+                    <p>Discount: 0 đ</p>
+                    <h4>TOTAL: <span class="text-danger">@((totalAmount + 20000).ToString("N0")) đ</span></h4>
+                </div>
+
+                <a href="@Url.Action("GioHang", "GioHang")" class="btn btn-outline-secondary">BACK TO CART</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Xử lý dropdown địa chỉ giao hàng
+            const deliveryAddressSelect = document.getElementById('delivery-address');
+            const newAddressGroup = document.getElementById('new-address-group');
+            const newAddressInput = document.getElementById('new-address');
+            const newAddressError = document.getElementById('new-address-error');
+            const updateAddressBtn = document.getElementById('update-address-btn');
+            const form = newAddressInput.closest('form');
+
+            deliveryAddressSelect.addEventListener('change', function () {
+                if (this.value === 'new') {
+                    newAddressGroup.style.display = 'block';
+                    newAddressInput.setAttribute('required', 'required');
+                    updateAddressBtn.style.display = 'inline-block';
+                } else {
+                    newAddressGroup.style.display = 'none';
+                    newAddressInput.removeAttribute('required');
+                    newAddressInput.value = '';
+                    newAddressError.textContent = '';
+                    updateAddressBtn.style.display = 'inline-block';
+                }
+            });
+
+            // Validate địa chỉ mới khi người dùng nhập
+            newAddressInput.addEventListener('blur', function () {
+                if (deliveryAddressSelect.value === 'new' && !/\S+/.test(this.value.trim())) {
+                    newAddressError.textContent = 'Địa chỉ mới không được để trống!';
+                } else {
+                    newAddressError.textContent = '';
+                }
+            });
+
+            // Xử lý nút "Cập nhật" địa chỉ giao hàng
+            updateAddressBtn.addEventListener('click', function () {
+                if (deliveryAddressSelect.value !== 'new') {
+                    alert('Vui lòng chọn "Thêm địa chỉ mới" để cập nhật địa chỉ!');
+                    return;
+                }
+
+                const newAddress = newAddressInput.value.trim();
+                if (!/\S+/.test(newAddress)) {
+                    newAddressError.textContent = 'Địa chỉ mới không được để trống!';
+                    return;
+                }
+
+                $.ajax({
+                    url: '@Url.Action("AddDeliveryAddress", "ThanhToan")',
+                    type: 'POST',
+                    data: { newAddress: newAddress },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            // Cập nhật dropdown với danh sách địa chỉ mới
+                            const addresses = response.addresses;
+                            deliveryAddressSelect.innerHTML = '<option value="" disabled selected>Chọn địa chỉ giao hàng</option>';
+                            addresses.forEach(addr => {
+                                const option = document.createElement('option');
+                                option.value = addr.AddressId;
+                                option.text = addr.Address + (addr.IsDefault ? ' (Mặc định)' : '');
+                                if (addr.Address === newAddress) {
+                                    option.selected = true;
+                                }
+                                deliveryAddressSelect.appendChild(option);
+                            });
+                            const newOption = document.createElement('option');
+                            newOption.value = 'new';
+                            newOption.text = 'Thêm địa chỉ mới';
+                            deliveryAddressSelect.appendChild(newOption);
+
+                            // Ẩn trường nhập địa chỉ mới
+                            newAddressGroup.style.display = 'none';
+                            newAddressInput.removeAttribute('required');
+                            newAddressInput.value = '';
+                            newAddressError.textContent = '';
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Có lỗi xảy ra khi thêm địa chỉ!');
+                    }
+                });
+            });
+
+            // Validate trước khi gửi form
+            form.addEventListener('submit', function (event) {
+                if (deliveryAddressSelect.value === 'new') {
+                    const newAddress = newAddressInput.value.trim();
+                    if (!/\S+/.test(newAddress)) {
+                        event.preventDefault();
+                        newAddressError.textContent = 'Địa chỉ mới không được để trống!';
+                        alert('Vui lòng nhập địa chỉ mới hoặc chọn một địa chỉ có sẵn!');
+                        return;
+                    }
+                }
+
+                // Xử lý thanh toán VNPay
+                const paymentMethodId = document.querySelector('input[name="paymentMethodId"]:checked').value;
+                if (paymentMethodId == '1') { // VNPay
+                    event.preventDefault();
+
+                    $.ajax({
+                        url: '@Url.Action("ThanhToan", "ThanhToan")',
+                        type: 'POST',
+                        data: $(this).serialize(),
+                        success: function (response) {
+                            if (response.Success) {
+                                if (response.Url) {
+                                    window.location.href = response.Url; // Chuyển hướng đến URL thanh toán VNPay hoặc trang thành công
+                                }
+                            } else {
+                                alert('Có lỗi xảy ra: ' + (response.Message || 'Không thể xử lý thanh toán.'));
+                            }
+                        },
+                        error: function () {
+                            alert('Có lỗi xảy ra khi gửi yêu cầu thanh toán!');
+                        }
+                    });
+                }
+            });
+
+            // Validate các trường khác (giữ nguyên)
+            function validateField(input, errorElement, pattern, message) {
+                input.addEventListener('blur', function () {
+                    if (!pattern.test(input.value.trim())) {
+                        errorElement.textContent = message;
+                    } else {
+                        errorElement.textContent = "";
+                    }
+                });
+            }
+
+            validateField(
+                document.getElementById('fullname'),
+                document.getElementById('fullname-error'),
+                /^(?!\s*$).{3,}$/,
+                "Tên phải từ 3 ký tự trở lên và không được chỉ chứa khoảng trắng."
+            );
+
+            validateField(
+                document.getElementById('email'),
+                document.getElementById('email-error'),
+                /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, // Sửa lỗi cú pháp @@
+                "Email không hợp lệ."
+            );
+
+            validateField(
+                document.getElementById('phone'),
+                document.getElementById('phone-error'),
+                /^(0[3|5|7|8|9])[0-9]{8}$/,
+                "Số điện thoại không hợp lệ! Phải bắt đầu bằng 03, 05, 07, 08, 09 và có 10 chữ số."
+            );
+
+            validateField(
+                document.getElementById('address'),
+                document.getElementById('address-error'),
+                /\S+/,
+                "Vui lòng nhập địa chỉ."
+            );
+
+            document.getElementById('profile-form').addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                let id = @Model.Id;
+                let fullName = document.getElementById('fullname').value.trim();
+                let email = document.getElementById('email').value.trim();
+                let phone = document.getElementById('phone').value.trim();
+                let address = document.getElementById('address').value.trim();
+
+                let validations = [
+                    {
+                        value: fullName,
+                        pattern: /^(?!\s*$).{3,}$/,
+                        errorElement: document.getElementById('fullname-error'),
+                        message: "Tên phải từ 3 ký tự trở lên và không được chỉ chứa khoảng trắng."
+                    },
+                    {
+                        value: email,
+                        pattern: /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, // Sửa lỗi cú pháp @@
+                        errorElement: document.getElementById('email-error'),
+                        message: "Email không hợp lệ."
+                    },
+                    {
+                        value: phone,
+                        pattern: /^(0[3|5|7|8|9])[0-9]{8}$/,
+                        errorElement: document.getElementById('phone-error'),
+                        message: "Số điện thoại không hợp lệ! Phải bắt đầu bằng 03, 05, 07, 08, 09 và có 10 chữ số."
+                    },
+                    {
+                        value: address,
+                        pattern: /\S+/,
+                        errorElement: document.getElementById('address-error'),
+                        message: "Vui lòng nhập địa chỉ."
+                    }
+                ];
+
+                let hasError = false;
+                validations.forEach(validation => {
+                    if (!validation.pattern.test(validation.value)) {
+                        validation.errorElement.textContent = validation.message;
+                        hasError = true;
+                    } else {
+                        validation.errorElement.textContent = "";
+                    }
+                });
+
+                if (hasError) {
+                    alert("Vui lòng nhập đúng thông tin trước khi cập nhật!");
+                    return;
+                }
+
+                let updates = [
+                    { field: "FullName", value: fullName },
+                    { field: "Email", value: email },
+                    { field: "Phone", value: phone },
+                    { field: "Address", value: address }
+                ];
+
+                let ajaxRequests = updates.map(update => {
+                    return $.ajax({
+                        url: '@Url.Action("UpdateUser", "ThanhToan")',
+                        type: 'POST',
+                        data: { id: id, field: update.field, value: update.value },
+                        success: function (response) {
+                            return response;
+                        },
+                        error: function (xhr, status, error) {
+                            return { success: false, message: `Lỗi khi gửi ${update.field}: ${error}` };
+                        }
+                    });
+                });
+
+                Promise.all(ajaxRequests).then((responses) => {
+                    let allSuccess = responses.every(r => r.success);
+                    if (allSuccess) {
+                        alert("Cập nhật thành công!");
+                        location.reload();
+                    } else {
+                        let errorMessages = responses
+                            .filter(r => !r.success)
+                            .map(r => r.message)
+                            .join("\n");
+                        alert("Cập nhật thất bại:\n" + errorMessages);
+                    }
+                }).catch((error) => {
+                    alert("Có lỗi xảy ra khi cập nhật!");
+                });
+            });
+        });
+    </script>
+}
+<style>
+    .billing-details .container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        width: 100%;
+        max-width: 1200px;
+        margin: 50px auto;
+        padding: 20px;
+    }
+
+    .billing-details .row {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto;
+        align-items: stretch;
+    }
+
+    .billing-details .col-md-6 {
+        width: 48%;
+        padding: 20px;
+        min-height: 450px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .billing-details .billing-form {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .billing-details input,
+    .billing-details select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+
+    .billing-details .sidebar-checkout {
+        width: 50%;
+        margin-top: 20px;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        max-height: 500px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .billing-details .billing-button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        background: #007bff;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 4px;
+        margin-top: 15px;
+    }
+
+        .billing-details .billing-button:hover {
+            background: #0056b3;
+        }
+
+    .billing-details body {
+        padding-top: 100px;
+        padding-bottom: 50px;
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .billing-details .payment-methods {
+        margin-top: 15px;
+        display: block !important; /* Đảm bảo không bị ẩn bởi CSS khác */
+        visibility: visible !important;
+    }
+
+    .billing-details .form-check {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+        .billing-details .form-check input[type="radio"] {
+            margin: 0;
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .billing-details .form-check label {
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+        }
+</style>

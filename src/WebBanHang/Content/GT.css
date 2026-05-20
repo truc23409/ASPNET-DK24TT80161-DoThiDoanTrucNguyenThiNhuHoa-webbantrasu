@@ -1,0 +1,274 @@
+﻿/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fdf6f8;
+    color: #333;
+}
+
+a {
+    text-decoration: none;
+}
+
+img, video {
+    max-width: 100%;
+    height: auto;
+}
+
+.header {
+    background-color: transparent;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 50px;
+}
+
+.logo a {
+    font-size: 36px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #ff3399;
+}
+
+.nav ul {
+    list-style: none;
+    display: flex;
+    gap: 60px;
+    margin: 0;
+    padding: 0;
+}
+
+    .nav ul li a {
+        color: #000;
+        font-weight: 600;
+        font-size: 20px;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        transition: color 0.3s;
+    }
+
+        .nav ul li a:hover {
+            color: #ff3399;
+        }
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-info {
+    font-weight: bold;
+    color: #e83e8c;
+    margin-right: 10px;
+}
+
+/* Phần ngoài vẫn căn giữa */
+.product-list {
+    display: flex;
+    justify-content: center; /* giữ căn giữa */
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+/* Tiêu đề căn giữa */
+.products h2 {
+    color: #000;
+    margin-bottom: 40px;
+    font-size: 2rem;
+    text-align: center;
+}
+
+/* About Section */
+.about {
+    text-align: center;
+    padding: 60px 20px;
+    background-color: #fff;
+}
+
+    .about h2, .achievements h2 {
+        font-size: 2rem;
+        color: #e83e8c;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+.about-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Căn theo chiều trên dưới */
+    gap: 40px; /* Khoảng cách giữa các phần */
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: left; /* Căn lề cho văn bản */
+}
+
+.about-text, .about-image {
+    width: 50%; /* Chia đều không gian */
+    max-width: 600px; /* Giới hạn chiều rộng */
+}
+
+    .about-text h3,
+    .about-image h3 {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .about-text p,
+    .about-image p {
+        color: #666;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .about-image img {
+        width: 100%;
+        border-radius: 10px;
+    }
+
+/* Responsive */
+@media (max-width: 992px) {
+    .about-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .about-text, .about-image {
+        width: 90%;
+        text-align: center;
+    }
+}
+
+
+
+/* Timeline Section */
+.timeline {
+    text-align: center;
+    padding: 50px 0;
+}
+
+.timeline-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px; /* Khoảng cách giữa các mục */
+    flex-wrap: wrap; /* Đảm bảo hiển thị tốt trên màn hình nhỏ */
+}
+
+.timeline-item {
+    width: 30%; /* Mỗi mục chiếm 30% chiều rộng */
+    max-width: 400px; /* Giới hạn tối đa */
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+    .timeline-item img {
+        display: block;
+        margin: 10px auto;
+        width: 100px;
+        height: auto;
+    }
+
+    .timeline-item .date {
+        font-weight: bold;
+        color: #e83e8c;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+.timeline-content h3 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.timeline-content p {
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .timeline-container {
+        flex-direction: column; /* Chuyển thành dạng dọc trên màn hình nhỏ */
+        align-items: center;
+    }
+
+    .timeline-item {
+        width: 90%; /* Chiếm toàn bộ chiều rộng trên màn hình nhỏ */
+    }
+}
+/* Achievements Section */
+.achievements {
+    text-align: center;
+    padding: 50px 0;
+    background-color: #fff;
+}
+
+    .achievements h2 {
+        font-size: 2rem;
+        color: #e83e8c;
+        margin-bottom: 30px;
+    }
+
+.achievements-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px; /* Khoảng cách giữa các mục */
+    flex-wrap: wrap; /* Đảm bảo hiển thị tốt trên màn hình nhỏ */
+}
+
+.achievement-item {
+    width: 30%;
+    max-width: 350px; /* Giới hạn chiều rộng */
+    background: #fdf6f8;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+    .achievement-item i {
+        font-size: 40px;
+        color: #e83e8c;
+        margin-bottom: 10px;
+    }
+
+    .achievement-item h3 {
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .achievement-item p {
+        color: #666;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+/* Responsive */
+@media (max-width: 992px) {
+    .achievements-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .achievement-item {
+        width: 90%;
+    }
+}

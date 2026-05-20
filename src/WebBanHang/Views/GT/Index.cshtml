@@ -1,0 +1,526 @@
+﻿@model IEnumerable<WebBanHang.Models.Food>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Banner Section -->
+<section class="banner">
+    <div id="carouselBanner" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+
+            <div class="carousel-item active">
+                <video autoplay muted loop class="d-block w-100 banner-video">
+                    <source src="@Url.Content("~/video/vd6.mp4")" type="video/mp4" />
+                </video>
+            </div>
+
+            <div class="carousel-item">
+                <video autoplay muted loop class="d-block w-100 banner-video">
+                    <source src="@Url.Content("~/video/vd7.mp4")" type="video/mp4" />
+                </video>
+            </div>
+
+            <div class="carousel-item">
+                <video autoplay muted loop class="d-block w-100 banner-video">
+                    <source src="@Url.Content("~/video/vd9.mp4")" type="video/mp4" />
+                </video>
+            </div>
+
+            <div class="carousel-item">
+                <video autoplay muted loop class="d-block w-100 banner-video">
+                    <source src="@Url.Content("~/video/vd10.mp4")" type="video/mp4" />
+                </video>
+            </div>
+
+        </div>
+
+        <!-- Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselBanner" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselBanner" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+</section>
+
+<!-- About -->
+<section class="about text-center">
+
+    <div class="section-title">
+        <span>Rosabelle Tea</span>
+        <h2>Sweet Moments, Softer Days ✨</h2>
+    </div>
+
+    <div class="about-content">
+
+        <!-- Story -->
+        <div class="about-text">
+            <h3>CÂU CHUYỆN NHỎ CỦA ROSABELLE</h3>
+
+            <p>
+                Rosabelle Tea được tạo ra dành cho những tâm hồn yêu sự nhẹ nhàng,
+                thích những buổi chiều yên tĩnh cùng một ly trà thơm và chút nhạc chill dịu dàng.
+                <br /><br />
+
+                Chúng tôi tin rằng đôi khi hạnh phúc chỉ đơn giản là tìm được một góc nhỏ thật xinh,
+                gọi món nước mình yêu thích và tận hưởng khoảng thời gian dành riêng cho bản thân.
+                <br /><br />
+
+                Rosabelle không chỉ là một quán trà,
+                mà còn là nơi lưu giữ những khoảnh khắc dễ thương,
+                những cuộc trò chuyện đáng nhớ và những bức ảnh thật đẹp.
+            </p>
+        </div>
+
+        <!-- Image -->
+        <div class="about-image">
+            <img src="@Url.Content("~/images/cafe1.png")" alt="Rosabelle Tea" />
+        </div>
+
+        <!-- Ingredients -->
+        <div class="about-text">
+            <h3>HƯƠNG VỊ NGỌT NGÀO</h3>
+
+            <p>
+                Từ những ly matcha latte béo nhẹ,
+                trà trái cây thanh mát cho đến các món bánh mềm thơm mới ra lò,
+                mọi thứ tại Rosabelle đều được chuẩn bị với sự chăm chút và yêu thương.
+                <br /><br />
+
+                Chúng tôi ưu tiên nguyên liệu tươi mới mỗi ngày,
+                kết hợp cùng công thức riêng để tạo nên những hương vị nhẹ nhàng,
+                dễ uống và đầy cảm xúc.
+                <br /><br />
+
+                Hy vọng mỗi lần ghé Rosabelle,
+                bạn đều mang về một chút niềm vui nhỏ cho riêng mình 🌸
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<!-- Achievements -->
+<section class="achievements text-center">
+
+    <div class="section-title">
+        <span>Lovely Milestones</span>
+        <h2>Những điều đáng yêu mà chúng tôi đạt được 💖</h2>
+    </div>
+
+    <div class="achievements-container">
+
+        <div class="achievement-item">
+            <i class="fas fa-heart"></i>
+            <h3>120.000+</h3>
+            <p>Ly nước được phục vụ đến những khách hàng yêu thích Rosabelle Tea</p>
+        </div>
+
+        <div class="achievement-item">
+            <i class="fas fa-camera"></i>
+            <h3>15.000+</h3>
+            <p>Khoảnh khắc được chia sẻ trên Instagram, Facebook và TikTok</p>
+        </div>
+
+        <div class="achievement-item">
+            <i class="fas fa-star"></i>
+            <h3>98%</h3>
+            <p>Khách hàng hài lòng về hương vị, không gian và trải nghiệm tại Rosabelle</p>
+        </div>
+
+    </div>
+</section>
+
+<!-- Timeline -->
+<section class="timeline">
+
+    <div class="section-title">
+        <span>Our Journey</span>
+        <h2>Hành trình dịu dàng của Rosabelle 🌷</h2>
+    </div>
+
+    <div class="timeline-container">
+
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <span class="date">08/2020</span>
+
+                <img src="@Url.Content("~/images/gt.png")" alt="Milestone 1">
+
+                <h3>Những bước đầu tiên</h3>
+
+                <p>
+                    Rosabelle Tea bắt đầu từ một góc nhỏ với mong muốn tạo nên
+                    không gian thật xinh dành cho những cô gái yêu sự nhẹ nhàng.
+                </p>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <span class="date">03/2021</span>
+
+                <img src="@Url.Content("~/images/gt2.png")" alt="Milestone 2">
+
+                <h3>Ra mắt cửa hàng đầu tiên</h3>
+
+                <p>
+                    Rosabelle chính thức chào đón những vị khách đầu tiên
+                    với menu trà, bánh ngọt và không gian pastel dịu dàng.
+                </p>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <span class="date">06/2021</span>
+
+                <img src="@Url.Content("~/images/gt3.png")" alt="Milestone 3">
+
+                <h3>Được yêu thích trên mạng xã hội</h3>
+
+                <p>
+                    Những góc decor xinh xắn và các món nước signature của Rosabelle
+                    nhanh chóng được nhiều bạn trẻ yêu thích và chia sẻ.
+                </p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Product -->
+<h3 class="product-title text-center">
+    ✨ BEST SELLER DRINKS ✨
+</h3>
+
+<section class="best-sellers container mt-4">
+
+    <div id="carouselBestSellers" class="carousel slide" data-bs-ride="carousel">
+
+        <div class="carousel-inner">
+
+            @if (ViewBag.BanChay is List<WebBanHang.Models.BanChayModel> bestSellers && bestSellers.Any())
+            {
+                int itemsPerSlide = 4;
+                int totalItems = bestSellers.Count;
+                int slideIndex = 0;
+
+                for (int i = 0; i < totalItems; i += itemsPerSlide)
+                {
+                    var itemsInThisSlide = bestSellers.Skip(i).Take(itemsPerSlide).ToList();
+
+                    <div class="carousel-item @(slideIndex == 0 ? "active" : "")">
+
+                        <div class="row justify-content-center">
+
+                            @foreach (var item in itemsInThisSlide)
+                            {
+                                <div class="col-md-3 d-flex justify-content-center">
+
+                                    <div class="product-card">
+
+                                        <img src="@(!string.IsNullOrEmpty(item.ImageUrl) ? item.ImageUrl : Url.Content("~/Images/no-image.png"))" />
+
+                                        <h5>@item.FoodName</h5>
+
+                                        <p class="price">
+                                            @item.Price.ToString("N0")đ
+                                        </p>
+
+                                        <p class="sold">
+                                            Đã bán: @item.TotalSold
+                                        </p>
+
+                                        <a href="@Url.Action("ChiTiet", "SanPham", new { id = item.FoodId })"
+                                           class="btn-buy">
+                                            Xem chi tiết
+                                        </a>
+
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+
+                    slideIndex++;
+                }
+            }
+            else
+            {
+                <p class="text-center text-danger">Không có dữ liệu</p>
+            }
+
+        </div>
+
+        <!-- Controls -->
+        <button class="carousel-control-prev"
+                type="button"
+                data-bs-target="#carouselBestSellers"
+                data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+
+        <button class="carousel-control-next"
+                type="button"
+                data-bs-target="#carouselBestSellers"
+                data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+
+    </div>
+</section>
+
+<style>
+
+    body {
+        background: #fffaf8;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .section-title span {
+        color: #d9a5b3;
+        font-size: 14px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    .section-title h2 {
+        font-size: 34px;
+        color: #5c4b51;
+        margin-top: 10px;
+        font-weight: 700;
+    }
+
+    /* Banner */
+
+    .banner {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .banner-video {
+        width: 100%;
+        height: 650px;
+        object-fit: cover;
+        border-radius: 0 0 30px 30px;
+    }
+
+    /* About */
+
+    .about {
+        padding: 80px 8%;
+    }
+
+    .about-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 50px;
+        flex-wrap: wrap;
+        margin-top: 50px;
+    }
+
+    .about-text {
+        flex: 1;
+        min-width: 320px;
+        background: #fff;
+        padding: 35px;
+        border-radius: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        text-align: left;
+    }
+
+        .about-text h3 {
+            color: #d88ca0;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .about-text p {
+            color: #666;
+            line-height: 1.9;
+            font-size: 15px;
+        }
+
+    .about-image img {
+        width: 360px;
+        border-radius: 30px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    /* Achievement */
+
+    .achievements {
+        padding: 80px 8%;
+        background: #fff3f6;
+    }
+
+    .achievements-container {
+        display: flex;
+        gap: 30px;
+        margin-top: 50px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .achievement-item {
+        background: white;
+        padding: 35px;
+        border-radius: 25px;
+        width: 320px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        transition: 0.3s;
+    }
+
+        .achievement-item:hover {
+            transform: translateY(-8px);
+        }
+
+        .achievement-item i {
+            font-size: 40px;
+            color: #e6a5b5;
+            margin-bottom: 20px;
+        }
+
+        .achievement-item h3 {
+            color: #d88ca0;
+            font-size: 30px;
+        }
+
+    /* Timeline */
+
+    .timeline {
+        padding: 80px 8%;
+    }
+
+    .timeline-container {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 50px;
+        flex-wrap: wrap;
+    }
+
+    .timeline-content {
+        width: 350px;
+        background: white;
+        border-radius: 25px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+
+        .timeline-content img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .timeline-content .date {
+            display: inline-block;
+            background: #f7d6e0;
+            color: #7d5d68;
+            padding: 8px 16px;
+            border-radius: 999px;
+            margin: 20px;
+            font-size: 13px;
+        }
+
+        .timeline-content h3 {
+            padding: 0 20px;
+            color: #d88ca0;
+        }
+
+        .timeline-content p {
+            padding: 0 20px 25px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+    /* Product */
+
+    .product-title {
+        color: #d88ca0;
+        margin-top: 80px;
+        font-size: 32px;
+        font-weight: 700;
+    }
+
+    .product-card {
+        background: white;
+        border-radius: 25px;
+        overflow: hidden;
+        width: 260px;
+        padding: 18px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        transition: 0.3s;
+        height: 100%;
+    }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 18px;
+        }
+
+        .product-card h5 {
+            margin-top: 18px;
+            color: #5c4b51;
+            font-weight: 600;
+        }
+
+    .price {
+        color: #d88ca0;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+
+    .sold {
+        color: #999;
+        font-size: 14px;
+    }
+
+    .btn-buy {
+        display: inline-block;
+        margin-top: 15px;
+        background: #f7d6e0;
+        color: #6d4f58;
+        padding: 10px 24px;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .btn-buy:hover {
+            background: #edbfd0;
+            color: #6d4f58;
+        }
+
+    /* Responsive */
+
+    @@media(max-width: 768px) {
+
+        .banner-video {
+            height: 400px;
+        }
+
+        .about-content {
+            flex-direction: column;
+        }
+
+        .about-image img {
+            width: 100%;
+        }
+    }
+</style>

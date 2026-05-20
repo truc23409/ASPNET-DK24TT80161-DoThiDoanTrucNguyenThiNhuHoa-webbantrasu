@@ -1,0 +1,504 @@
+﻿@{
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+    ViewBag.Title = "Login";
+}
+
+<section class="login-page">
+
+    <!-- LEFT SIDE -->
+    <div class="login-left">
+
+        <video autoplay muted loop playsinline class="login-video">
+
+            <source src="@Url.Content("~/video/vd6.mp4")"
+                    type="video/mp4" />
+
+        </video>
+
+        <div class="video-overlay"></div>
+
+        <div class="left-content">
+
+            <span class="mini-title">
+                Rosabelle Tea ✨
+            </span>
+
+            <h1>
+                Lovely Drinks <br />
+                Lovely Moments
+            </h1>
+
+            <p>
+                Sign in to enjoy sweet rewards,
+                member benefits and your favorite drinks 💖
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="login-right">
+
+        <div class="login-card">
+
+            <span class="login-tag">
+                Welcome Back 🌸
+            </span>
+
+            <h2>
+                Sign In
+            </h2>
+
+            <p class="subtitle">
+                Login to continue your Rosabelle Tea journey ✨
+            </p>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert-success-custom">
+                    @Html.Encode(TempData["SuccessMessage"])
+                </div>
+            }
+
+            @if (ViewBag.Message != null)
+            {
+                <div class="alert-error-custom">
+                    @ViewBag.Message
+                </div>
+            }
+
+            @using (Html.BeginForm("Login", "Login"))
+            {
+                @Html.AntiForgeryToken()
+
+                <!-- USERNAME -->
+                <div class="input-wrapper">
+
+                    <label>
+                        Username
+                    </label>
+
+                    <div class="input-group-custom">
+
+                        <i class="fas fa-user"></i>
+
+                        <input type="text"
+                               name="username"
+                               placeholder="Enter your username"
+                               autocomplete="username"
+                               required />
+
+                    </div>
+
+                </div>
+
+                <!-- PASSWORD -->
+                <div class="input-wrapper">
+
+                    <label>
+                        Password
+                    </label>
+
+                    <div class="input-group-custom">
+
+                        <i class="fas fa-lock"></i>
+
+                        <input type="password"
+                               name="password"
+                               placeholder="Enter your password"
+                               id="password"
+                               autocomplete="current-password"
+                               required />
+
+                        <i class="fas fa-eye toggle-password"
+                           onclick="togglePassword()"></i>
+
+                    </div>
+
+                </div>
+
+                <!-- OPTIONS -->
+                <div class="options-row">
+
+                    <label class="remember-me">
+
+                        <input type="checkbox" name="remember" />
+
+                        <span>
+                            Remember Me
+                        </span>
+
+                    </label>
+
+                    <a href="@Url.Action("Forgot", "Forgot")"
+                       class="forgot-link">
+
+                        Forgot Password?
+
+                    </a>
+
+                </div>
+
+                <!-- BUTTON -->
+                <button type="submit" class="btn-login">
+
+                    Sign In ✨
+
+                </button>
+            }
+
+            <!-- SIGNUP -->
+            <div class="signup-text">
+
+                Don't have an account?
+
+                <a href="@Url.Action("Register", "Register")">
+
+                    Signup
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<style>
+
+    body {
+        margin: 0;
+        background: #fffaf8;
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+    }
+
+    /* PAGE */
+
+    .login-page {
+        min-height: 100vh;
+        display: flex;
+    }
+
+    /* LEFT */
+
+    .login-left {
+        width: 55%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .video-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.35);
+    }
+
+    .left-content {
+        position: absolute;
+        top: 50%;
+        left: 80px;
+        transform: translateY(-50%);
+        color: white;
+        z-index: 2;
+        max-width: 520px;
+    }
+
+    .mini-title {
+        display: inline-block;
+        color: #ffdbe5;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        font-size: 13px;
+        margin-bottom: 25px;
+    }
+
+    .left-content h1 {
+        font-size: 72px;
+        line-height: 1.1;
+        margin-bottom: 30px;
+        font-weight: 700;
+    }
+
+    .left-content p {
+        font-size: 18px;
+        line-height: 2;
+        color: rgba(255,255,255,0.9);
+    }
+
+    /* RIGHT */
+
+    .login-right {
+        width: 45%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 60px;
+        background: #fffaf8;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 500px;
+        background: white;
+        border-radius: 40px;
+        padding: 60px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+    }
+
+    .login-tag {
+        color: #d9a5b3;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        font-size: 13px;
+    }
+
+    .login-card h2 {
+        color: #5d4c54;
+        font-size: 52px;
+        margin: 20px 0;
+        font-weight: 700;
+    }
+
+    .subtitle {
+        color: #888;
+        line-height: 1.9;
+        margin-bottom: 40px;
+        font-size: 16px;
+    }
+
+    /* ALERT */
+
+    .alert-success-custom,
+    .alert-error-custom {
+        padding: 18px 22px;
+        border-radius: 18px;
+        margin-bottom: 25px;
+        font-size: 15px;
+    }
+
+    .alert-success-custom {
+        background: #eefaf2;
+        color: #3b7b50;
+    }
+
+    .alert-error-custom {
+        background: #fff1f5;
+        color: #c95d7c;
+    }
+
+    /* INPUT */
+
+    .input-wrapper {
+        margin-bottom: 28px;
+    }
+
+        .input-wrapper label {
+            display: block;
+            margin-bottom: 12px;
+            color: #5d4c54;
+            font-weight: 600;
+        }
+
+    .input-group-custom {
+        display: flex;
+        align-items: center;
+        background: #fff7f9;
+        border-radius: 20px;
+        padding: 0 20px;
+        height: 65px;
+        transition: 0.3s;
+    }
+
+        .input-group-custom:focus-within {
+            box-shadow: 0 0 0 4px rgba(243,196,209,0.25);
+        }
+
+        .input-group-custom i {
+            color: #d9a5b3;
+            font-size: 18px;
+        }
+
+        .input-group-custom input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            height: 100%;
+            padding: 0 18px;
+            font-size: 16px;
+            outline: none;
+            color: #5d4c54;
+        }
+
+    .toggle-password {
+        cursor: pointer;
+    }
+
+    /* OPTIONS */
+
+    .options-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 35px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .remember-me {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #777;
+        font-size: 15px;
+    }
+
+    .forgot-link {
+        color: #d88ca0;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .forgot-link:hover {
+            color: #c96d84;
+        }
+
+    /* BUTTON */
+
+    .btn-login {
+        width: 100%;
+        border: none;
+        height: 65px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #f3c4d1, #e7aebf);
+        color: #6a4d56;
+        font-size: 17px;
+        font-weight: 700;
+        transition: 0.3s;
+    }
+
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(243,196,209,0.35);
+        }
+
+    /* SIGNUP */
+
+    .signup-text {
+        margin-top: 35px;
+        text-align: center;
+        color: #888;
+        font-size: 15px;
+    }
+
+        .signup-text a {
+            color: #d88ca0;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+    /* RESPONSIVE */
+
+    @@media(max-width: 1200px) {
+
+        .left-content h1 {
+            font-size: 54px;
+        }
+
+        .login-card {
+            padding: 45px;
+        }
+    }
+
+    @@media(max-width: 992px) {
+
+        .login-page {
+            flex-direction: column;
+        }
+
+        .login-left,
+        .login-right {
+            width: 100%;
+        }
+
+        .login-left {
+            height: 420px;
+        }
+
+        .login-video {
+            height: 420px;
+        }
+
+        .left-content {
+            left: 40px;
+            right: 40px;
+        }
+
+        .login-right {
+            padding: 40px 20px 80px;
+        }
+    }
+
+    @@media(max-width: 768px) {
+
+        .left-content h1 {
+            font-size: 40px;
+        }
+
+        .left-content p {
+            font-size: 15px;
+        }
+
+        .login-card {
+            border-radius: 30px;
+            padding: 35px 25px;
+        }
+
+            .login-card h2 {
+                font-size: 38px;
+            }
+
+        .options-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<script>
+
+    function togglePassword() {
+
+        var passwordField =
+            document.getElementById("password");
+
+        var toggleIcon =
+            document.querySelector(".toggle-password");
+
+        if (passwordField.type === "password") {
+
+            passwordField.type = "text";
+
+            toggleIcon.classList.remove("fa-eye");
+            toggleIcon.classList.add("fa-eye-slash");
+        }
+        else {
+
+            passwordField.type = "password";
+
+            toggleIcon.classList.remove("fa-eye-slash");
+            toggleIcon.classList.add("fa-eye");
+        }
+    }
+
+</script>

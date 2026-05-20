@@ -1,0 +1,852 @@
+﻿@model WebBanHang.Models.Food
+
+@{
+    ViewBag.Title = @Model.FoodName;
+    var isLoggedIn = User.Identity.IsAuthenticated;
+}
+
+<!-- HERO BANNER -->
+<section class="banner">
+
+    <div id="carouselBanner"
+         class="carousel slide"
+         data-bs-ride="carousel">
+
+        <div class="carousel-inner">
+
+            <div class="carousel-item active">
+
+                <video autoplay muted loop class="d-block w-100 banner-video">
+                    <source src="@Url.Content("~/video/vd6.mp4")" type="video/mp4" />
+                    Your browser does not support the video tag.
+                </video>
+
+                <div class="banner-overlay">
+                    <h1>
+                        Lovely Drinks & Sweet Moments
+                    </h1>
+
+                    <p>
+                        Coffee • Tea • Cakes • Cute little happiness 🌸
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- PRODUCT DETAIL -->
+<section class="product-detail-section">
+
+    <div class="container">
+
+        <div class="product-detail-wrapper">
+
+            <!-- IMAGE -->
+            <div class="product-image-box">
+
+                <div class="image-card">
+
+                    <img src="@Url.Content(Model.ImageURL)"
+                         alt="@Model.FoodName"
+                         class="product-image">
+
+                </div>
+
+            </div>
+
+            <!-- INFO -->
+            <div class="product-info-box">
+                <h1 class="product-name">
+                    @Model.FoodName
+                </h1>
+
+                <p class="product-subtitle">
+                    Sweet little happiness in every sip 💖
+                </p>
+
+                <p class="product-price">
+                    @String.Format("{0:N0} ₫", Model.Price)
+                </p>
+
+                <!-- SIZE -->
+                @if (Model.CategoryId != 4)
+                {
+                    <div class="option-group">
+
+                        <h4>
+                            Chọn size 🌷
+                        </h4>
+
+                        <div class="option-list">
+
+                            @if (ViewBag.Sizes != null && ViewBag.Sizes.Count > 0)
+                            {
+                                var firstSize = ViewBag.Sizes[0];
+
+                                foreach (var size in ViewBag.Sizes)
+                                {
+                                    <button class="size-option @(size.SizeID == firstSize.SizeID ? "active" : "")"
+                                            data-size="@size.SizeID">
+
+                                        @size.SizeName
+                                        (+ @String.Format("{0:N0} ₫", size.ExtraPrice))
+
+                                    </button>
+                                }
+                            }
+
+                        </div>
+
+                    </div>
+
+                    <!-- TOPPING -->
+                    <div class="option-group mt-4">
+
+                        <h4>
+                            Topping 💕
+                        </h4>
+
+                        <div class="option-list">
+
+                            @if (ViewBag.Toppings != null)
+                            {
+                                foreach (var topping in ViewBag.Toppings)
+                                {
+                                    <button class="topping-option"
+                                            data-topping="@topping.ToppingID">
+
+                                        @topping.ToppingName
+                                        (+ @String.Format("{0:N0} ₫", topping.ToppingPrice))
+
+                                    </button>
+                                }
+                            }
+
+                        </div>
+
+                    </div>
+                }
+
+                <!-- QUANTITY -->
+                <div class="quantity-wrapper">
+
+                    <label>
+                        Số lượng
+                    </label>
+
+                    <input type="number"
+                           id="quantity"
+                           name="quantity"
+                           value="1"
+                           min="1"
+                           class="quantity-input">
+
+                </div>
+
+                <!-- BUTTON -->
+                <div class="button-group">
+
+                    <button onclick="muaNgay()" class="buy-now-btn">
+                        Mua ngay ✨
+                    </button>
+
+                    <button onclick="themVaoGioHang()" class="add-cart-btn">
+                        Thêm vào giỏ hàng 🛒
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- DESCRIPTION -->
+<section class="description-section">
+
+    <div class="container">
+
+        <div class="description-box">
+            <h2>
+                Mô tả sản phẩm 🌸
+            </h2>
+
+            <p>
+                @Model.Description
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- RELATED -->
+<section class="related-section">
+
+    <div class="container">
+
+        <div class="related-header">
+            <h2>
+                Sản phẩm liên quan 💖
+            </h2>
+
+        </div>
+
+        <div class="related-container">
+
+            @if (ViewBag.SanPhamlienquan != null &&
+                ((IEnumerable<WebBanHang.Models.Food>)ViewBag.SanPhamlienquan).Any())
+            {
+                foreach (var item in (IEnumerable<WebBanHang.Models.Food>)ViewBag.SanPhamlienquan)
+                {
+                    <a href="@Url.Action("ChiTiet", "SanPham", new { id = item.FoodId })"
+                       class="related-card">
+
+                        <div class="related-image-wrapper">
+
+                            <img src="@Url.Content(item.ImageURL)"
+                                 alt="@item.FoodName"
+                                 class="related-image">
+
+                        </div>
+
+                        <div class="related-content">
+
+                            <h4>
+                                @item.FoodName
+                            </h4>
+
+                            <p>
+                                @String.Format("{0:N0} ₫", item.Price)
+                            </p>
+
+                        </div>
+
+                    </a>
+                }
+            }
+            else
+            {
+                <p class="text-center">
+                    Không có sản phẩm liên quan.
+                </p>
+            }
+
+        </div>
+
+    </div>
+
+</section>
+
+<style>
+
+    body {
+        background: linear-gradient(to bottom, #fffaf8, #fff5f7);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    /* BANNER */
+
+    .banner {
+        width: 100%;
+        height: 650px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .banner-video {
+        width: 100%;
+        height: 650px;
+        object-fit: cover;
+        filter: brightness(0.7);
+    }
+
+    .banner-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: white;
+        z-index: 10;
+    }
+
+        .banner-overlay .mini-title {
+            color: #ffd6e2;
+            font-size: 14px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .banner-overlay h1 {
+            font-size: 72px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            text-shadow: 0 5px 25px rgba(0,0,0,0.3);
+            color: white;
+        }
+
+        .banner-overlay p {
+            font-size: 22px;
+            color: #f8f1f3;
+            letter-spacing: 1px;
+            color: white;
+        }
+
+    /* PRODUCT DETAIL */
+
+    .product-detail-section {
+        padding: 20px 0;
+    }
+
+    .product-detail-wrapper {
+        display: flex;
+        gap: 80px;
+    }
+
+    /* IMAGE */
+
+    .product-image-box {
+        flex: 1;
+    }
+
+    .image-card {
+        background: white;
+        border-radius: 40px;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+        padding: 20px;
+    }
+
+    .product-image {
+        width: 100%;
+        height: 650px;
+        object-fit: cover;
+        border-radius: 30px;
+        transition: 0.4s ease;
+    }
+
+    .image-card:hover .product-image {
+        transform: scale(1.03);
+    }
+
+    /* INFO */
+
+    .product-info-box {
+        flex: 1;
+    }
+
+    .mini-title {
+        color: #d9a5b3;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        font-size: 13px;
+    }
+
+    .product-name {
+        font-size: 56px;
+        color: #5d4c54;
+        margin: 20px 0;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .product-subtitle {
+        color: #999;
+        font-size: 18px;
+        line-height: 1.8;
+        margin-bottom: 30px;
+    }
+
+    .product-price {
+        color: #d88ca0;
+        font-size: 42px;
+        font-weight: bold;
+        margin-bottom: 40px;
+    }
+
+    /* OPTIONS */
+
+    .option-group h4 {
+        color: #5d4c54;
+        font-size: 20px;
+        margin-bottom: 18px;
+    }
+
+    .option-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .size-option,
+    .topping-option {
+        border: none;
+        background: #fff1f5;
+        padding: 14px 22px;
+        border-radius: 999px;
+        color: #7b5b65;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+
+        .size-option:hover,
+        .topping-option:hover {
+            background: #f7d6e0;
+        }
+
+        .size-option.active,
+        .topping-option.active {
+            background: #f3c4d1;
+            color: #6a4d56;
+            font-weight: 600;
+        }
+
+    /* QUANTITY */
+
+    .quantity-wrapper {
+        margin-top: 40px;
+    }
+
+        .quantity-wrapper label {
+            display: block;
+            margin-bottom: 12px;
+            color: #5d4c54;
+            font-weight: 600;
+        }
+
+    .quantity-input {
+        width: 140px;
+        height: 55px;
+        border-radius: 18px;
+        border: none;
+        background: white;
+        padding: 0 20px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        font-size: 18px;
+    }
+
+    /* BUTTON */
+
+    .button-group {
+        display: flex;
+        gap: 20px;
+        margin-top: 40px;
+        flex-wrap: wrap;
+    }
+
+    .buy-now-btn,
+    .add-cart-btn {
+        border: none;
+        padding: 18px 35px;
+        border-radius: 999px;
+        font-size: 16px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+    .buy-now-btn {
+        background: #f3c4d1;
+        color: #6a4d56;
+    }
+
+        .buy-now-btn:hover {
+            background: #ecadc0;
+            transform: translateY(-3px);
+        }
+
+    .add-cart-btn {
+        background: #fff1f5;
+        color: #7b5b65;
+    }
+
+        .add-cart-btn:hover {
+            background: #f8dce5;
+            transform: translateY(-3px);
+        }
+
+    /* DESCRIPTION */
+
+    .description-box {
+        background: white;
+        border-radius: 40px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+        .description-box span {
+            color: #d9a5b3;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-size: 13px;
+        }
+
+        .description-box h2 {
+            color: #5d4c54;
+            font-size: 42px;
+            margin: 20px 0;
+            font-weight: 700;
+        }
+
+        .description-box p {
+            color: #888;
+            line-height: 2;
+            font-size: 17px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+    /* RELATED */
+
+    .related-section {
+        padding-bottom: 100px;
+    }
+
+    .related-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+        .related-header span {
+            color: #d9a5b3;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-size: 13px;
+        }
+
+        .related-header h2 {
+            color: #5d4c54;
+            font-size: 42px;
+            margin-top: 20px;
+            font-weight: 700;
+        }
+
+    .related-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 30px;
+    }
+
+    .related-card {
+        display: block;
+        background: white;
+        border-radius: 30px;
+        overflow: hidden;
+        text-decoration: none;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        transition: 0.3s;
+    }
+
+        .related-card:hover {
+            transform: translateY(-8px);
+        }
+
+    .related-image {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+    }
+
+    .related-content {
+        padding: 20px;
+    }
+
+        .related-content h4 {
+            color: #5d4c54;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .related-content p {
+            color: #d88ca0;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* RESPONSIVE */
+
+    @@media(max-width: 1200px) {
+
+        .product-detail-wrapper {
+            flex-direction: column;
+        }
+
+        .related-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media(max-width: 768px) {
+
+        .banner {
+            height: 500px;
+        }
+
+        .banner-video {
+            height: 500px;
+        }
+
+        .banner-overlay h1 {
+            font-size: 42px;
+        }
+
+        .banner-overlay p {
+            font-size: 16px;
+        }
+
+        .product-detail-wrapper {
+            gap: 40px;
+        }
+
+        .product-name {
+            font-size: 38px;
+        }
+
+        .product-price {
+            font-size: 32px;
+        }
+
+        .product-image {
+            height: 420px;
+        }
+
+        .description-box {
+            padding: 35px;
+        }
+
+            .description-box h2,
+            .related-header h2 {
+                font-size: 30px;
+            }
+
+        .button-group {
+            flex-direction: column;
+        }
+
+        .buy-now-btn,
+        .add-cart-btn {
+            width: 100%;
+        }
+
+        .related-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script>
+
+        function validateSelection() {
+
+            var categoryId = @Model.CategoryId;
+            var selectedSize = document.querySelector(".size-option.active");
+            var quantity = parseInt(document.getElementById("quantity").value);
+
+            if (categoryId != 4 && !selectedSize) {
+                alert("Vui lòng chọn size!");
+                return false;
+            }
+
+            if (quantity < 1) {
+                alert("Số lượng phải lớn hơn 0!");
+                return false;
+            }
+
+            return true;
+        }
+
+        function getProductInfo() {
+
+            var categoryId = @Model.CategoryId;
+            var foodId = @Model.FoodId;
+            var quantity = parseInt(document.getElementById("quantity").value);
+
+            var selectedSize = document.querySelector(".size-option.active");
+            var selectedToppings = document.querySelectorAll(".topping-option.active");
+
+            var sizeId = (categoryId != 4 && selectedSize)
+                ? selectedSize.getAttribute("data-size")
+                : null;
+
+            var toppingIds = (categoryId != 4)
+                ? Array.from(selectedToppings).map(t => t.getAttribute("data-topping"))
+                : [];
+
+            return {
+                foodId: foodId,
+                soLuong: quantity,
+                sizeId: sizeId,
+                toppingIds: toppingIds
+            };
+        }
+
+        function updateCartCount(count) {
+
+            var cartCountElement = document.querySelector(".cart-count");
+
+            if (cartCountElement) {
+
+                cartCountElement.textContent = count > 0 ? count : "";
+                cartCountElement.style.display = count > 0 ? "inline-block" : "none";
+            }
+        }
+
+        function muaNgay() {
+
+            if (!validateSelection()) return;
+
+            var productInfo = getProductInfo();
+
+            fetch('/ThanhToan/MuaNgay', {
+
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify(productInfo)
+
+            })
+
+            .then(response => response.json())
+
+            .then(data => {
+
+                if (!data.success) {
+
+                    alert("Lỗi: " + (data.message || "Có lỗi xảy ra!"));
+                }
+                else {
+
+                    if (data.cartCount !== undefined) {
+                        updateCartCount(data.cartCount);
+                    }
+
+                    window.location.href =
+                        data.redirectUrl || "/ThanhToan/ThanhToan";
+                }
+            })
+
+            .catch(error => {
+
+                console.error(error);
+                alert("Có lỗi xảy ra!");
+            });
+        }
+
+        function themVaoGioHang() {
+
+            if (!validateSelection()) return;
+
+            var productInfo = getProductInfo();
+
+            fetch('/GioHang/ThemVaoGio', {
+
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify(productInfo)
+
+            })
+
+            .then(response => response.json())
+
+            .then(data => {
+
+                if (!data.success) {
+
+                    alert("Lỗi: " + (data.message || "Có lỗi xảy ra!"));
+                }
+                else {
+
+                    if (data.cartCount !== undefined) {
+                        updateCartCount(data.cartCount);
+                    }
+
+                    alert("Đã thêm vào giỏ hàng 💖");
+                }
+            })
+
+            .catch(error => {
+
+                console.error(error);
+                alert("Có lỗi xảy ra!");
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            var categoryId = @Model.CategoryId;
+
+            if (categoryId != 4) {
+
+                document.querySelectorAll(".size-option").forEach(button => {
+
+                    button.addEventListener("click", function () {
+
+                        document.querySelectorAll(".size-option")
+                            .forEach(btn => btn.classList.remove("active"));
+
+                        this.classList.add("active");
+                    });
+                });
+
+                document.querySelectorAll(".topping-option").forEach(button => {
+
+                    button.addEventListener("click", function () {
+
+                        this.classList.toggle("active");
+                    });
+                });
+            }
+
+            fetch('/GioHang/GetCartCount', {
+
+                method: 'GET',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+
+            })
+
+            .then(response => response.json())
+
+            .then(data => {
+
+                if (data.cartCount !== undefined) {
+                    updateCartCount(data.cartCount);
+                }
+            })
+
+            .catch(error => {
+
+                console.error(error);
+            });
+        });
+
+    </script>
+}

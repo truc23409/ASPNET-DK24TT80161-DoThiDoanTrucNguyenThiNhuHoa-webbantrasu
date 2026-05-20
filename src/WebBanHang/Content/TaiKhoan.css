@@ -1,0 +1,209 @@
+﻿
+
+/* Đảm bảo bảng không vượt ra ngoài khung */
+.profile-content {
+    width: 1000px;
+    padding: 25px;
+    border-radius: 10px;
+    background: #fff;
+    overflow-x: auto; /* Thêm thanh cuộn ngang nếu nội dung vượt khung */
+}
+
+/* Các phần CSS khác giữ nguyên */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+/* Banner */
+.banner {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    position: relative;
+}
+
+.banner-video,
+.banner-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+@media (max-width: 768px) {
+    .banner {
+        height: 200px;
+    }
+
+    .banner-video,
+    .banner-image {
+        height: 200px;
+    }
+}
+
+/* Container chính để căn giữa */
+.profile-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 300px);
+    padding: 20px 0;
+}
+
+/* Định dạng khối chứa Sidebar và Content */
+.profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    max-width: 1000px;
+    width: 100%;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Sidebar */
+.profile-sidebar {
+    width: 300px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* Định dạng phần header của Sidebar */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+    .profile-header img {
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border: 2px solid #ddd;
+    }
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+    .profile-info h5 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: bold;
+        align-items: center;
+        color: #333;
+    }
+
+    .profile-info p {
+        font-size: 14px;
+        color: #777;
+        align-items: center;
+        margin-top: 5px;
+    }
+
+.profile-sidebar button {
+    background: #007bff;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+    .profile-sidebar button:hover {
+        background: #0056b3;
+    }
+
+/* Profile Menu */
+.profile-menu {
+    list-style: none;
+    padding: 0;
+}
+
+    .profile-menu li {
+        padding: 12px;
+        font-size: 16px;
+        border-bottom: 1px solid #ddd;
+        transition: 0.3s;
+    }
+
+        .profile-menu li a {
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+            .profile-menu li a:hover {
+                color: #007bff;
+                font-weight: bold;
+            }
+
+/* Profile Content */
+.profile-content h4 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+.profile-content label {
+    font-weight: bold;
+    margin-top: 10px;
+    display: block;
+    font-size: 14px;
+}
+
+.profile-content input,
+.profile-content textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+    .profile-content input:focus,
+    .profile-content textarea:focus {
+        border-color: #007bff;
+        box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
+        outline: none;
+    }
+
+.profile-content button {
+    margin-top: 15px;
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+    .profile-content button:hover {
+        background: #0056b3;
+    }
