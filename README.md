@@ -37,6 +37,18 @@
 - Cập nhật số lượng sản phẩm trong giỏ hàng
 - Tính tổng tiền đơn hàng
 
+## 21/05/2025
+- Xây dựng chức năng đăng ký và đăng nhập
+- Phân quyền người dùng và quản trị viên
+- Kiểm tra validation form
+- Xử lý session đăng nhập
+
+## 24/05/2025
+- Xây dựng trang quản trị Admin
+- CRUD sản phẩm
+- CRUD danh mục sản phẩm
+- Upload hình ảnh sản phẩm
+
 ---
 
 # Công nghệ sử dụng
