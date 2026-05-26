@@ -49,6 +49,12 @@
 - CRUD danh mục sản phẩm
 - Upload hình ảnh sản phẩm
 
+## 27/05/2025
+- Xây dựng chức năng đặt hàng
+- Lưu thông tin hóa đơn và chi tiết hóa đơn
+- Hiển thị lịch sử mua hàng
+- Tối ưu truy vấn dữ liệu
+
 ---
 
 # Công nghệ sử dụng
