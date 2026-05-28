@@ -1,0 +1,33 @@
+﻿<tbody>
+    @if (Model != null && Model.Any())
+    {
+        int index = 1;
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>@index</td>
+                <td>@item.ProductId</td>
+                <td>@item.ProductName</td>
+                <td>@item.QuantitySold</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.ImageURL))
+                    {
+                        <img src="@item.ImageURL" width="50" height="50" />
+                    }
+                    else
+                    {
+                        <span>Không có ảnh</span>
+                    }
+                </td>
+                <td>@item.LastUpdated?.ToString("dd/MM/yyyy")</td> <!-- Kiểm tra null -->
+            </tr>
+            index++;
+        }
+    }
+    else
+    {
+        <tr>
+            <td colspan="6" class="text-center">Không có dữ liệu</td>
+        </tr>
+    }
+</tbody>

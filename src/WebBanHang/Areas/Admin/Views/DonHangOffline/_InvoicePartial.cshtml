@@ -1,0 +1,41 @@
+﻿@model WebBanHang.Models.Invoice
+
+@if (Model == null)
+{
+    <p>Không có hóa đơn nào chưa thanh toán cho bàn này.</p>
+}
+else
+{
+    <h3>Hóa đơn ID: @Model.InvoiceId</h3>
+    <p>Ngày vào: @Model.DateCheckIn.ToString("dd/MM/yyyy HH:mm")</p>
+    <table class="table-auto w-full mt-4 border">
+        <thead>
+            <tr>
+                <th class="border px-4 py-2">Món</th>
+                <th class="border px-4 py-2">Số lượng</th>
+                <th class="border px-4 py-2">Giá</th>
+                <th class="border px-4 py-2">Tổng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.InvoiceDetails != null && Model.InvoiceDetails.Any())
+            {
+                foreach (var item in Model.InvoiceDetails)
+                {
+                    <tr>
+                        <td class="border px-4 py-2">@item.Food.FoodName</td>
+                        <td class="border px-4 py-2">@item.SoLuong</td>
+                        <td class="border px-4 py-2">@item.Price.ToString("N0")</td>
+                        <td class="border px-4 py-2">@((item.Price * item.SoLuong).ToString("N0"))</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center border px-4 py-2">Chưa có món nào trong hóa đơn</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

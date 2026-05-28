@@ -1,0 +1,491 @@
+﻿@model IEnumerable<WebBanHang.Models.Order>
+@{
+    Layout = "../Shared/_Layout.cshtml";
+    ViewBag.Title = "Danh sách hóa đơn";
+}
+
+<!-- CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+<div class="page-container">
+    <div class="category-header">
+        <h2 class="category-title">Danh sách hóa đơn</h2>
+    </div>
+
+    <div class="top-actions">
+        <div class="row w-100">
+            <div class="col-md-3">
+                <label for="startDate"><b>Ngày bắt đầu</b></label>
+                <input type="date" id="startDate" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label for="endDate"><b>Ngày kết thúc</b></label>
+                <input type="date" id="endDate" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <br />
+                <button id="btnThongKe" class="btn btn-primary">
+                    <i class="fas fa-chart-bar"></i> Thống Kê
+                </button>
+                <button id="btnExportExcel" class="btn btn-success">
+                    <i class="fas fa-file-excel"></i> Xuất Excel
+                </button>
+            </div>
+            <div class="col-md-3">
+                <div class="search-container">
+                    <input type="text" id="searchBox" placeholder="Tìm kiếm hóa đơn...">
+                    <button class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="customControls" style="display: flex; align-items: center; gap: 10px; margin: 15px 0;">
+        <div id="dataTables_length"></div>
+        <button id="sortButton" type="button" class="btn btn-light border">
+            <i class="fas fa-sort"></i> Sắp xếp theo ngày
+        </button>
+    </div>
+
+    <table class="table table-bordered table-striped" id="hoaDonTable">
+        <thead class="thead-dark">
+            <tr>
+                <th>Mã HĐ</th>
+                <th>Khách hàng</th>
+                <th>Ngày đặt</th>
+                <th>Tổng tiền</th>
+                <th>PT Thanh toán</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.OrderId</td>
+                    <td>@(item.User != null ? item.User.FullName : "N/A")</td>
+                    <td>@item.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@item.TotalAmount.ToString("N0") đ</td>
+                    <td>@(item.PhuongThucThanhToan?.TenPhuongThuc ?? "N/A")</td>
+                    <td>
+                        @{
+                            var statusClass = "";
+                            var statusText = item.OrderStatu?.StatusName ?? "Unknown";
+                            switch (statusText)
+                            {
+                                case "Đặt hàng thành công":
+                                    statusClass = "badge-info";
+                                    break;
+                                case "Đang chuẩn bị đơn hàng":
+                                    statusClass = "badge-warning";
+                                    break;
+                                case "Đang giao hàng":
+                                    statusClass = "badge-primary";
+                                    break;
+                                case "Giao hàng thành công":
+                                    statusClass = "badge-success";
+                                    break;
+                                case "Đã hủy":
+                                    statusClass = "badge-danger";
+                                    break;
+                                default:
+                                    statusClass = "badge-secondary";
+                                    break;
+                            }
+                        }
+                        <span class="badge @statusClass">@statusText</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-info btn-view-detail" data-order-id="@item.OrderId">
+                            <i class="fas fa-eye"></i> Xem chi tiết
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Chi tiết hóa đơn -->
+<div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="detailModalLabel">
+                    <i class="fas fa-file-invoice"></i> Chi tiết hóa đơn
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="detailContent">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <p class="mt-2">Đang tải dữ liệu...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times"></i> Đóng
+                </button>
+                <button type="button" class="btn btn-success" id="exportDetailExcel">
+                    <i class="fas fa-file-excel"></i> Xuất Excel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var table = $('#hoaDonTable').DataTable({
+            "paging": true,
+            "lengthMenu": [5, 10, 25, 50, 100],
+            "pageLength": 10,
+            "ordering": true,
+            "info": true,
+            "searching": false,
+            "columnDefs": [
+                { "orderable": true, "targets": [0, 1, 2, 3, 4, 5] },
+                { "orderable": false, "targets": [6] }
+            ],
+            "language": {
+                "lengthMenu": "Hiển thị _MENU_ bản ghi",
+                "zeroRecords": "Không tìm thấy hóa đơn nào",
+                "info": "Hiển thị _START_ đến _END_ (tổng _TOTAL_ hóa đơn)",
+                "infoEmpty": "Không có dữ liệu",
+                "paginate": {
+                    "first": "Đầu",
+                    "last": "Cuối",
+                    "next": "Tiếp",
+                    "previous": "Trước"
+                }
+            },
+            "drawCallback": function () {
+                $("#hoaDonTable_length").appendTo("#dataTables_length");
+            }
+        });
+
+        // Sắp xếp theo ngày
+        var sortDirection = 'desc';
+        $("#sortButton").click(function () {
+            table.order([2, sortDirection]).draw();
+            sortDirection = (sortDirection === 'asc') ? 'desc' : 'asc';
+        });
+
+        // Xem chi tiết hóa đơn
+        $(document).on('click', '.btn-view-detail', function () {
+            var orderId = $(this).data('order-id');
+
+            $('#detailContent').html(`
+                <div class="text-center">
+                    <div class="spinner-border text-primary"></div>
+                    <p>Đang tải chi tiết đơn hàng #${orderId}...</p>
+                </div>
+            `);
+
+            $.ajax({
+                url: '@Url.Action("GetOrderDetail", "DonHangOnline", new { area = "Admin" })',
+                type: 'GET',
+                data: { orderId: orderId },
+                success: function (response) {
+                    if (response.success) {
+                        var html = generateOrderDetailHTML(response.data);
+                        $('#detailContent').html(html);
+                        $('#exportDetailExcel').off('click').click(function() {
+                            exportOrderDetailToExcel(orderId);
+                        });
+                    } else {
+                        $('#detailContent').html(`
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle"></i> ${response.message}
+                            </div>
+                        `);
+                    }
+                },
+                error: function () {
+                    $('#detailContent').html(`
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle"></i> Lỗi khi tải chi tiết đơn hàng!
+                        </div>
+                    `);
+                }
+            });
+
+            $('#detailModal').modal('show');
+        });
+
+        // Đóng modal bằng button X
+        $(document).on('click', '.close', function () {
+            $('#detailModal').modal('hide');
+        });
+
+        // Đóng modal bằng button Đóng
+        $(document).on('click', '[data-dismiss="modal"]', function () {
+            $('#detailModal').modal('hide');
+        });
+
+        // Đóng modal khi click ra ngoài
+        $(document).on('click', '.modal', function (e) {
+            if ($(e.target).hasClass('modal')) {
+                $('#detailModal').modal('hide');
+            }
+        });
+
+        // Thống kê theo ngày
+        $("#btnThongKe").click(function () {
+            var startDate = $("#startDate").val();
+            var endDate = $("#endDate").val();
+
+            if (!startDate || !endDate) {
+                Swal.fire('Thông báo', 'Vui lòng chọn đầy đủ ngày bắt đầu và kết thúc!', 'warning');
+                return;
+            }
+
+            window.location.href = '@Url.Action("Index", "HoaDon", new { area = "Admin" })' +
+                '?startDate=' + startDate + '&endDate=' + endDate;
+        });
+
+        // Xuất Excel danh sách
+        $("#btnExportExcel").click(function () {
+            var startDate = $("#startDate").val();
+            var endDate = $("#endDate").val();
+            var url = '@Url.Action("ExportToExcel", "HoaDon", new { area = "Admin" })';
+            if (startDate && endDate) {
+                url += '?startDate=' + startDate + '&endDate=' + endDate;
+            }
+            window.location.href = url;
+        });
+    });
+
+    function generateOrderDetailHTML(order) {
+        var html = `
+            <div class="order-info mb-3 p-3 bg-light rounded">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong><i class="fas fa-receipt"></i> Mã đơn hàng:</strong> #${order.OrderId}</p>
+                        <p><strong><i class="fas fa-user"></i> Khách hàng:</strong> ${order.FullName}</p>
+                        <p><strong><i class="fas fa-phone"></i> Số điện thoại:</strong> ${order.Phone || 'Chưa cập nhật'}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong><i class="fas fa-calendar"></i> Ngày đặt:</strong> ${order.OrderDate}</p>
+                        <p><strong><i class="fas fa-money-bill-wave"></i> Tổng tiền:</strong> <span class="text-danger font-weight-bold">${formatCurrency(order.TotalAmountValue)}</span></p>
+                        <p><strong><i class="fas fa-credit-card"></i> Thanh toán:</strong> ${order.PaymentMethod}</p>
+                        <p><strong><i class="fas fa-truck"></i> Trạng thái:</strong>
+                            <span class="badge badge-${getStatusBadgeClass(order.Status)}">${order.Status}</span>
+                        </p>
+                    </div>
+                </div>
+                ${order.DeliveryAddress ? `
+                <div class="row">
+                    <div class="col-12">
+                        <p><strong><i class="fas fa-map-marker-alt"></i> Địa chỉ giao hàng:</strong> ${order.DeliveryAddress}</p>
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+            <h5><i class="fas fa-shopping-cart"></i> Danh sách sản phẩm</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Size</th>
+                            <th>Topping</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        if (order.OrderDetails && order.OrderDetails.length > 0) {
+            var stt = 1;
+            order.OrderDetails.forEach(function(item) {
+                html += `
+                    <tr>
+                        <td>${stt++}</td>
+                        <td>${item.FoodName}</td>
+                        <td>${item.SizeName || 'Không có'}</td>
+                        <td>${item.ToppingName || 'Không có'}</td>
+                        <td>${item.Quantity}</td>
+                        <td>${formatCurrency(item.Price)}</td>
+                        <td>${formatCurrency(item.Quantity * item.Price)}</td>
+                     </tr>
+                `;
+            });
+        } else {
+            html += `<tr><td colspan="7" class="text-center">Không có sản phẩm nào</td></tr>`;
+        }
+
+        html += `
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-info">
+                            <td colspan="6" class="text-right font-weight-bold">Tổng cộng:</td>
+                            <td class="font-weight-bold text-danger">${formatCurrency(order.TotalAmountValue)}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        `;
+
+        return html;
+    }
+
+    function formatCurrency(amount) {
+        if (!amount) return '0₫';
+        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+    }
+
+    function getStatusBadgeClass(status) {
+        var statusMap = {
+            'Đặt hàng thành công': 'info',
+            'Đang chuẩn bị đơn hàng': 'warning',
+            'Đang giao hàng': 'primary',
+            'Giao hàng thành công': 'success',
+            'Đã hủy': 'danger'
+        };
+        return statusMap[status] || 'secondary';
+    }
+
+    function exportOrderDetailToExcel(orderId) {
+        window.location.href = '@Url.Action("ExportOrderDetailToExcel", "HoaDon", new { area = "Admin" })?orderId=' + orderId;
+    }
+
+    // Tìm kiếm
+    $('#searchBox').on('keyup', function() {
+        var value = $(this).val().toLowerCase();
+        $('#hoaDonTable tbody tr').filter(function() {
+            var found = false;
+            $(this).find('td').each(function() {
+                if ($(this).text().toLowerCase().indexOf(value) > -1) {
+                    found = true;
+                    return false;
+                }
+            });
+            $(this).toggle(found);
+        });
+    });
+</script>
+
+<style>
+    .page-container {
+        padding: 20px;
+        background: #f8f9fa;
+        min-height: 100vh;
+    }
+
+    .category-header {
+        background: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .category-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+        color: #333;
+    }
+
+    .top-actions {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .search-container {
+        position: relative;
+        width: 100%;
+    }
+
+        .search-container input {
+            width: 100%;
+            padding: 8px 35px 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+    .search-btn {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #007bff;
+    }
+
+    #customControls {
+        margin: 15px 0;
+    }
+
+    .table {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+        .table th {
+            background-color: #343a40;
+            color: white;
+            border: none;
+        }
+
+    .badge {
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+    }
+
+    .btn-view-detail {
+        padding: 5px 12px;
+        font-size: 13px;
+    }
+
+    .modal-lg {
+        max-width: 900px;
+    }
+
+    .order-info {
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    @@media (max-width: 768px) {
+        .top-actions .row {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .table {
+            font-size: 12px;
+        }
+
+        .btn-view-detail {
+            padding: 3px 8px;
+            font-size: 11px;
+        }
+    }
+</style>

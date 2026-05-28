@@ -1,0 +1,103 @@
+﻿@model List<WebBanHang.Models.Food>
+
+
+
+<script>
+
+        // Khi bấm "Thêm món"
+        $("#btnAddToOrder").click(function () {
+            var selected = $("#productSelect option:selected");
+            var name = selected.text();
+            var price = parseInt(selected.data("price"));
+            var quantity = parseInt($("#quantity").val());
+            var total = price * quantity;
+
+            if (!selected.val()) {
+                alert("Vui lòng chọn món!");
+                return;
+            }
+
+            // Thêm vào hóa đơn
+            var newRow = `
+                <tr>
+                    <td>${name}</td>
+                    <td>${quantity}</td>
+                    <td>${price.toLocaleString()} đ</td>
+                    <td>${total.toLocaleString()} đ</td>
+                </tr>
+            `;
+            $("#hoaDonTable tbody").append(newRow);
+
+            // Update tổng tiền
+            var currentTotal = parseInt($("#tongTienHoaDon").data("total")) || 0;
+            currentTotal += total;
+            $("#tongTienHoaDon").data("total", currentTotal);
+            $("#tongTienHoaDon").text(currentTotal.toLocaleString() + " đ");
+        });
+    });
+</script>
+
+<style>
+    .category-list {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
+
+        .category-list li a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+            .category-list li a:hover {
+                text-decoration: underline;
+            }
+
+    .product-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-top: 20px;
+        justify-content: center;
+    }
+
+    .product-card {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+        width: 200px;
+        border-radius: 5px;
+        background: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+        .product-card img {
+            max-width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+    .price {
+        color: red;
+        font-weight: bold;
+    }
+
+    .btn-add {
+        background-color: #ff5722;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        cursor: pointer;
+        border-radius: 3px;
+        margin-top: 5px;
+    }
+
+        .btn-add:hover {
+            background-color: #e64a19;
+        }
+</style>

@@ -1,0 +1,195 @@
+﻿@model List<WebBanHang.Models.BanChayModel>
+
+@{
+    Layout = "../Shared/_Layout.cshtml";
+    ViewBag.Title = "Sản phẩm bán chạy";
+}
+
+
+
+<h2 class="text-center">🔥 SẢN PHẨM BÁN CHẠY 🔥</h2>
+
+<div id="carouselBestSellers" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        @if (Model != null && Model.Any())
+        {
+            int itemsPerSlide = 4; // Số sản phẩm hiển thị trên mỗi slide
+            int totalItems = Model.Count;
+            int slideIndex = 0;
+
+            for (int i = 0; i < totalItems; i += itemsPerSlide)
+            {
+                var itemsInThisSlide = Model.Skip(i).Take(itemsPerSlide).ToList();
+
+                <div class="carousel-item @(slideIndex == 0 ? "active" : "")">
+                    <div class="row">
+                        @foreach (var item in itemsInThisSlide)
+                        {
+                            <div class="col-md-3">
+                                <div class="product-card">
+                                    <img id="ImagePreview" src="@(!string.IsNullOrEmpty(item.ImageUrl) ? item.ImageUrl : Url.Content("~/Images/no-image.png"))"
+                                         style="max-width: 100%; height: auto; display: block;" />
+
+                                    <h5>@item.FoodName</h5>
+                                    <p class="price" style="color: #C19A6B; font-weight: bold;">@item.Price.ToString("N0")đ</p>
+                                    <p class="sold">Đã bán: @item.TotalSold</p>
+                                    <a href="@Url.Action("Info", "SanPhamAdmin", new { id = item.FoodId })" class="btn-buy">
+                                        Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                slideIndex++;
+            }
+        }
+        else
+        {
+            <p class="text-center text-danger">Không có dữ liệu</p>
+        }
+    </div>
+
+    <!-- Controls -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselBestSellers" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselBestSellers" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+
+
+<style>
+
+
+    #carouselBestSellers {
+        max-width: 1000px; /* Giới hạn kích thước carousel */
+        margin: auto;
+        padding-bottom: 30px;
+    }
+
+    .best-sellers {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 10px 0; /* Tăng khoảng cách trên/dưới */
+    }
+    /* Banner */
+    .banner {
+        width: 100%;
+        height: 600px;
+        margin: 0 auto;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .banner-video,
+    .banner-image {
+        width: 90%;
+        height: 500px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .banner:hover .banner-video,
+    .banner:hover .banner-image {
+        /*    transform: scale(1.05);*/
+    }
+
+    /* Căn giữa danh sách sản phẩm */
+    .product-list {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .carousel-inner {
+        padding-bottom: 20px; /* Giảm khoảng cách dư thừa */
+        min-height: 400px;
+    }
+
+    .col-md-3 {
+        padding-bottom: 20px; /* Tạo khoảng trống dưới */
+    }
+
+    .carousel {
+        overflow: visible !important;
+    }
+
+    /* Card sản phẩm */
+    .product-card {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        padding: 15px;
+        width: 260px;
+        height: 100%;
+        border-radius: 10px;
+        transition: all 0.3s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; /* Căn trái toàn bộ nội dung */
+        text-align: left; /* Chữ căn trái */
+        align-items: flex-start; /* Căn trái toàn bộ nội dung */
+        text-align: left; /* Chữ căn trái */
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+
+        .product-card:hover {
+            transform: scale(1.05);
+            box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .product-card h5 {
+            font-size: 16px;
+            color: #333;
+            margin: 10px 0 5px;
+        }
+
+        .product-card .price {
+            color: #C19A6B !important; /* Màu trùng với nền nút "Xem chi tiết" */
+            font-weight: bold;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        .product-card .sold {
+            color: #666;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .product-card .btn-buy {
+            background: #e5d1c0;
+            color: #3a3a3a;
+            border: none;
+            padding: 8px 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            border-radius: 5px;
+            font-size: 13px;
+            text-transform: uppercase;
+            margin-top: auto;
+        }
+
+            .product-card .btn-buy:hover {
+                background: #d3b49e;
+            }
+
+    .price {
+        color: #C19A6B; /* Thay bằng mã màu của nền nút "Xem chi tiết" */
+        font-weight: bold;
+    }
+</style>

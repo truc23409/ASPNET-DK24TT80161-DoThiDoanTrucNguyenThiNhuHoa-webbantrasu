@@ -1,0 +1,40 @@
+﻿@model IEnumerable<WebBanHang.Models.OrderDetail>
+
+@{
+    var orderId = ViewBag.OrderId;
+    var stt = 1;
+}
+
+@foreach (var item in Model)
+{
+    var toppingName = "Không có";
+    if (item.ToppingId.HasValue && item.Topping != null)
+    {
+        toppingName = item.Topping.ToppingName;
+    }
+
+    var sizeName = item.Size != null ? item.Size.SizeName : "Không có";
+
+    <tr class="detail-row">
+        <td>@orderId</td>
+        <td>@(item.Food != null ? item.Food.FoodName : "Không xác định")</td>
+        <td>@sizeName</td>
+        <td>@toppingName</td>
+        <td>@item.Quantity</td>
+        <td>@item.Price.ToString("N0") đ</td>
+        <td>
+            <a href="@Url.Action("ExportChiTietToExcel", "HoaDon", new { area = "Admin", orderId = orderId })"
+               class="btn btn-success btn-sm">
+                <i class="fas fa-file-excel"></i> Xuất Excel
+            </a>
+        </td>
+    </tr>
+    stt++;
+}
+
+@if (!Model.Any())
+{
+    <tr class="detail-row">
+        <td colspan="7" class="text-center text-danger">Không có dữ liệu chi tiết</td>
+    </tr>
+}

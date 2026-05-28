@@ -1,0 +1,40 @@
+﻿@model List<WebBanHang.Models.Ingredient>
+@{
+    ViewBag.Title = "Danh sách nguyên liệu";
+}
+
+<h2>Danh sách nguyên liệu</h2>
+
+<!-- Nút xuất Excel -->
+<a href="@Url.Action("ExportToExcel", "KhoXuatFile")" class="btn btn-success">Xuất Excel</a>
+
+<!-- Bảng dữ liệu -->
+<table class="table table-dark">
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Mã nguyên liệu</th>
+            <th>Tên nguyên liệu</th>
+            <th>Số lượng</th>
+            <th>Hình ảnh</th>
+            <th>Ngày cập nhật</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int index = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@index</td>
+                <td>@item.IngredientId</td>
+                <td>@item.IngredientName</td>
+                <td>@item.SoLuong</td>
+                <td><img src="@item.ImageURL" width="50" height="50" /></td>
+                <td>@item.LastUpdated.ToString("dd/MM/yyyy")</td>
+            </tr>
+            index++;
+        }
+    </tbody>
+</table>

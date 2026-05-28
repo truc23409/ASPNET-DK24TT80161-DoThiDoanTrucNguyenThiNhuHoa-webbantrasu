@@ -1,0 +1,70 @@
+﻿@model List<WebBanHang.Models.TableFood>
+
+@if (Model != null && Model.Any())
+{
+    <div class="table-list">
+        @foreach (var ban in Model)
+        {
+            var isOccupied = ban.TrangThai == "True";
+            var statusClass = isOccupied ? "occupied" : "empty";
+            var statusText = isOccupied ? "Đã có khách" : "Bàn Trống";
+            var icon = isOccupied ? "<i class='fas fa-user'></i>" : "<i class='fas fa-chair'></i>";
+            <div class="table-item @statusClass w-100 mb-2" data-id="@ban.TableId">
+                <p><strong>@ban.TableName</strong></p>
+                <p class="status-text">@Html.Raw(icon) @statusText</p>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p class="text-danger">Không có bàn nào.</p>
+}
+
+<style>
+    .table-list {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+    }
+
+    .table-item {
+        padding: 15px;
+        text-align: center;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 1px solid #ccc;
+        background-color: #fff;
+    }
+
+        .table-item.empty {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .table-item.occupied {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .table-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .table-item.selected {
+            background-color: #dc3545 !important; /* đỏ khi chọn */
+            color: #fff !important;
+            border: 2px solid #dc3545 !important;
+            box-shadow: 0 0 10px rgba(220, 53, 69, 0.6);
+        }
+
+        .table-item p {
+            margin: 5px 0;
+        }
+
+        .table-item i {
+            margin-right: 5px;
+        }
+</style>

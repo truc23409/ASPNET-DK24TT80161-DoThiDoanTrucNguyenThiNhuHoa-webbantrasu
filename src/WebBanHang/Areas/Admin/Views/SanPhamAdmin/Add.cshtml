@@ -1,0 +1,214 @@
+﻿@model  WebBanHang.Models.FoodAddViewModel
+
+<h2>Thêm món ăn</h2>
+<hr />
+
+<div class="container">
+    @using (Html.BeginForm("Add", "SanPhamAdmin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+       
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="FoodName">Tên món ăn:</label>
+                    @Html.TextBoxFor(model => model.Food.FoodName, new { @class = "form-control validate", id = "FoodName" })
+                    <span class="text-danger error-message" id="error-FoodName"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="CategoryId">Loại:</label>
+                    @Html.DropDownListFor(model => model.Food.CategoryId,
+                        ViewBag.Categories != null
+                            ? new SelectList(ViewBag.Categories, "CategoryId", "CategoryName")
+                            : new SelectList(new List<SelectListItem>()),
+                        "Chọn loại", new { @class = "form-control validate", id = "CategoryId" })
+                    <span class="text-danger error-message" id="error-CategoryId"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="SelectedIngredientIds">Chọn nguyên liệu:</label>
+                    @Html.ListBoxFor(model => model.SelectedIngredientIds,
+                        new MultiSelectList(ViewBag.Ingredients, "IngredientId", "IngredientName", Model.SelectedIngredientIds),
+                        new { @class = "form-control select2 validate", id = "SelectedIngredientIds" })
+                    <span class="text-danger error-message" id="error-SelectedIngredientIds"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="Price">Giá:</label>
+                    @Html.TextBoxFor(model => model.Food.Price, new { @class = "form-control validate", id = "Price", type = "number", min = "1" })
+                    <span class="text-danger error-message" id="error-Price"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="Discount">Giảm Giá (%):</label>
+                    @Html.TextBoxFor(model => model.Food.Discount, new { @class = "form-control validate", id = "Discount", type = "number", min = "0", max = "100" })
+                    <span class="text-danger error-message" id="error-Discount"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="DiscountPrice">Giá Giảm:</label>
+                    <input type="text" id="DiscountPrice" class="form-control" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label for="Stock">Số lượng tồn:</label>
+                    @Html.TextBoxFor(model => model.Food.Stock, new { @class = "form-control validate", id = "Stock", type = "number", min = "0" })
+                    <span class="text-danger error-message" id="error-Stock"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="Description">Mô Tả:</label>
+                    @Html.TextAreaFor(model => model.Food.Description, new { @class = "form-control validate", rows = 3, id = "Description" })
+                    <span class="text-danger error-message" id="error-Description"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Ảnh nguyên liệu</label>
+                    <input type="file" id="ImageFile" name="ImageFile" class="form-control" accept="image/*" onchange="showPreview(event)" />
+                    <img id="previewImage" src="@Url.Content(Model.Food?.ImageURL ?? "/images/no-image.png")"
+                         alt="Ảnh nguyên liệu" width="150" height="150"
+                         style="display:block; margin-top:10px;" />
+                    <span id="error-ImageURL" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="UpdatedDate">Ngày cập nhật:</label>
+                    @Html.TextBoxFor(model => model.Food.UpdatedDate,
+                        "{0:yyyy-MM-dd}",
+                        new { @class = "form-control validate", type = "date", id = "UpdatedDate" })
+                    <span class="text-danger error-message" id="error-UpdatedDate"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="Status">Trạng thái:</label>
+                    @Html.DropDownListFor(model => model.Food.Status,
+                        new SelectList(new[] {
+                            new { Value = true, Text = "Còn bán" },
+                            new { Value = false, Text = "Ngừng bán" }
+                        }, "Value", "Text", Model.Food.Status),
+                        new { @class = "form-control validate", id = "Status" })
+                    <span class="text-danger error-message" id="error-Status"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-3">Lưu thay đổi</button>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        function showPreview(event) {
+            let reader = new FileReader();
+            reader.onload = function () {
+                $("#previewImage").attr("src", reader.result).show();
+                $("#error-ImageURL").text("");
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        $(document).ready(function () {
+            $(".select2").select2({ placeholder: "Chọn nguyên liệu" });
+
+            function validateInput(id, errorMessage, condition) {
+                let value = $(id).val().trim();
+                let errorElement = $("#error-" + id.substring(1));
+                if (condition(value)) {
+                    $(id).removeClass("is-invalid").addClass("is-valid");
+                    errorElement.text("");
+                } else {
+                    $(id).removeClass("is-valid").addClass("is-invalid");
+                    errorElement.text(errorMessage);
+                }
+            }
+
+            $("#FoodName").blur(function () {
+                validateInput("#FoodName", "Tên món ăn không được để trống.", v => v !== "");
+            });
+
+            $("#CategoryId").blur(function () {
+                validateInput("#CategoryId", "Bạn phải chọn một loại món ăn.", v => v !== "");
+            });
+
+            $("#Price").blur(function () {
+                validateInput("#Price", "Giá phải lớn hơn 0.", v => v !== "" && parseFloat(v) > 0);
+            });
+
+            $("#Discount").blur(function () {
+                validateInput("#Discount", "Giảm giá phải từ 0 đến 100%.", v => v !== "" && parseFloat(v) >= 0 && parseFloat(v) <= 100);
+            });
+
+            $("#Stock").blur(function () {
+                validateInput("#Stock", "Số lượng tồn phải lớn hơn hoặc bằng 0.", v => v !== "" && parseInt(v) >= 0);
+            });
+
+            // Cập nhật giá giảm tự động
+            function updateDiscountPrice() {
+                let price = parseFloat($("#Price").val()) || 0;
+                let discount = parseFloat($("#Discount").val()) || 0;
+                let discountPrice = price - (price * (discount / 100));
+                $("#DiscountPrice").val(discountPrice.toLocaleString('vi-VN') + " đ");
+            }
+
+            $("#Price, #Discount").on("input", function () {
+                updateDiscountPrice();
+            });
+
+            updateDiscountPrice(); // Cập nhật ngay khi trang tải xong
+            $("form").submit(function (event) {
+                event.preventDefault(); // Ngăn chặn reload trang
+
+                let formData = new FormData(this);
+
+                $.ajax({
+                    url: $(this).attr("action"),
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            window.location.href = "/Admin/SanPhamAdmin/Info"; // Chuyển về danh sách
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Lỗi kết nối!");
+                    }
+                });
+            });
+            // Kiểm tra khi submit form
+            $("form").submit(function (event) {
+                let isValid = true;
+
+                $(".validate").each(function () {
+                    $(this).blur();
+                    if ($(this).hasClass("is-invalid")) {
+                        isValid = false;
+                    }
+                });
+
+                let fileInput = $("#ImageFile")[0];
+                if (fileInput.files.length === 0 && $("#previewImage").attr("src").includes("no-image.png")) {
+                    $("#error-ImageURL").text("Vui lòng chọn một file ảnh.");
+                    isValid = false;
+                } else {
+                    $("#error-ImageURL").text("");
+                }
+
+                if (!isValid) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,261 @@
+﻿@model IEnumerable<WebBanHang.Models.Category>
+
+@{
+    Layout = "../Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/SanPhamAdmin.css" rel="stylesheet" />
+
+<div class="page-container">
+    <div class="category-header">
+        <h2 class="category-title">Danh mục sản phẩm</h2>
+    </div>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success mt-3">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
+    {
+        <div class="alert alert-danger mt-3">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+    <div class="top-actions">
+        <a href="@Url.Action("Add", "DanhMucSP")" class="btn-add">
+            <i class="fas fa-plus"></i>
+        </a>
+        <div class="search-container">
+            <input type="text" id="searchBox" placeholder="Search" onkeyup="searchCategory()">
+            <button class="search-btn">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+
+
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <p class="alert alert-warning">No categories available.</p>
+    }
+    else
+    {
+        <table class="category-table" id="categoryTable">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Mã loại sản phẩm</th>
+                    <th>Tên loại sản phẩm</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var category in Model)
+                {
+                    <tr>
+                        <td><input type="checkbox" /></td>
+                        <td>@category.CategoryId</td>
+                        <td>@category.CategoryName</td>
+                        <td class="action-buttons">
+                            <a href="@Url.Action("Edit", "DanhMucSP", new { id = category.CategoryId })" class="btn-edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="@Url.Action("Delete", "DanhMucSP", new { id = category.CategoryId })" class="btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này không?');">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+<script>
+    function searchCategory() {
+        var input, filter, table, tr, tdMa, tdTen, i, txtValueMa, txtValueTen;
+        input = document.getElementById("searchBox");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("categoryTable");
+        tr = table.getElementsByTagName("tr");
+
+        for (i = 1; i < tr.length; i++) {
+            tdMa = tr[i].getElementsByTagName("td")[1];  // Cột Mã loại sản phẩm
+            tdTen = tr[i].getElementsByTagName("td")[2]; // Cột Tên loại sản phẩm
+
+            if (tdMa && tdTen) {
+                txtValueMa = tdMa.textContent || tdMa.innerText;
+                txtValueTen = tdTen.textContent || tdTen.innerText;
+
+                // Kiểm tra nếu tìm thấy trong Mã hoặc Tên
+                if (txtValueMa.toUpperCase().indexOf(filter) > -1 || txtValueTen.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+
+</script>
+
+<style>
+    .category-header {
+        background-color: #ffff; /* Màu nền bạn muốn */
+        padding: 10px 30px;
+        border-radius: 0 25px 25px 0;
+        margin-bottom: 20px;
+    }
+
+    .category-title {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .category-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .top-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .search-container {
+        position: relative;
+        width: 250px;
+    }
+
+        .search-container input {
+            width: 100%;
+            padding: 8px 35px 8px 10px; /* Tạo khoảng trống bên phải cho icon */
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+    .search-btn {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        color: #007bff;
+        font-size: 16px;
+    }
+
+    .btn-add {
+        padding: 10px 15px;
+        background-color: #83aafd;
+        color: white;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+        .btn-add:hover {
+            background-color: #0056b3;
+        }
+
+    .category-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        background: white;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+        .category-table th, .category-table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .category-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .category-table tr:hover {
+            background-color: #f1f1f1; /* Màu nền nhạt khi hover */
+            transition: background-color 0.3s ease-in-out; /* Hiệu ứng chuyển màu mượt mà */
+        }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .btn-edit, .btn-delete {
+        padding: 6px 12px;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+    }
+
+    .btn-edit {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background-color: #218838;
+    }
+
+    .btn-delete:hover {
+        background-color: #c82333;
+    }
+
+    .alert {
+        padding: 12px;
+        text-align: center;
+        border-radius: 5px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2; /* Màu xám nhạt cho hàng chẵn */
+    }
+
+    tr:nth-child(odd) {
+        background-color: white; /* Màu trắng cho hàng lẻ */
+    }
+
+</style>

@@ -1,0 +1,22 @@
+﻿@model IEnumerable<WebBanHang.Models.Order>
+
+@foreach (var hd in Model)
+{
+    <tr>
+        <td>@hd.OrderId</td>
+        <td>@hd.UserId</td>
+        <td>@hd.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+        <td>@hd.TotalAmount.ToString("N0") đ</td>
+        <td>@(hd.PhuongThucThanhToan != null ? hd.PhuongThucThanhToan.TenPhuongThuc : "Không xác định")</td>
+        <td>
+            @{
+                var db = new WebBanHang.Models.WebAppDBEntities();
+                var status = db.Database.SqlQuery<WebBanHang.Models.OrderStatu>("SELECT * FROM OrderStatus WHERE StatusId = @p0", hd.StatusId).FirstOrDefault();
+                @(status != null ? status.StatusName : "Unknown")
+            }
+        </td>
+        <td>
+            <button class="btn btn-info btnChiTiet" data-id="@hd.OrderId">📄 Xem Chi Tiết</button>
+        </td>
+    </tr>
+}

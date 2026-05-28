@@ -1,0 +1,139 @@
+﻿@{
+    ViewBag.Title = "Danh sách nguyên liệu";
+}
+
+<div class="category-header">
+    <h2 class="category-title">Danh sách nguyên liệu</h2>
+</div>
+<div class="export-container">
+    <a href="@Url.Action("ExportToExcel", "KhoXuatFile")" class="btn btn-success">Xuất Excel</a>
+</div>
+<table class="table table-bordered custom-table">
+    <thead>
+        <tr>
+            <th class="col-id">ID</th>
+            <th class="col-name">Tên</th>
+            <th class="col-qty">Số lượng</th>
+            <th class="col-img">Hình ảnh</th>
+            <th class="col-date">Cập nhật</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in ViewBag.Ingredients)
+        {
+            <tr>
+                <td>@item.IngredientId</td>
+                <td>@item.IngredientName</td>
+                <td>@item.SoLuong</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.ImageURL))
+                    {
+                        <img src="@item.ImageURL" alt="Hình ảnh" class="img-thumbnail">
+                    }
+                </td>
+                <td>@item.LastUpdated.ToString("yyyy-MM-dd")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+     
+        padding: 8px;
+        text-align: left;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2 !important;
+    }
+
+    tr:nth-child(odd) {
+        background-color: white !important;
+    }
+
+    .custom-table tbody tr:nth-child(even) {
+        background-color: #f2f2f2 !important;
+    }
+
+    .custom-table tbody tr:nth-child(even) {
+        background-color: #f2f2f2 !important;
+    }
+
+    .custom-table tbody tr:nth-child(odd) {
+        background-color: white !important;
+    }
+
+    .category-header {
+        background-color: #ffff;
+        padding: 20px 30px;
+        border-radius: 0 25px 25px 0;
+        margin-bottom: 20px;
+    }
+
+    .category-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .export-container {
+        text-align: right; /* Căn phải */
+        margin-bottom: 2px;
+    }
+
+    .custom-table {
+        width: 100%;
+        text-align: center;
+        font-size: 16px;
+    }
+
+        .custom-table th {
+            background-color: #f8f9fa;
+            padding: 10px;
+        }
+
+        .custom-table td {
+            padding: 12px;
+            vertical-align: middle;
+        }
+
+    .col-id {
+        width: 8%;
+    }
+
+    .col-name {
+        width: 20%;
+        white-space: nowrap;
+    }
+
+    .col-qty {
+        width: 15%;
+    }
+
+    .col-img {
+        width: 15%;
+    }
+
+    .col-date {
+        width: 20%;
+    }
+
+    .img-thumbnail {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+</style>

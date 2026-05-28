@@ -1,0 +1,30 @@
+﻿@model IEnumerable<WebBanHang.Models.Order>
+
+@foreach (var item in Model)
+{
+    var statusText = item.OrderStatu?.StatusName ?? "Unknown";
+    var statusClass = "";
+    switch (statusText)
+    {
+        case "Đặt hàng thành công": statusClass = "badge-info"; break;
+        case "Đang chuẩn bị đơn hàng": statusClass = "badge-warning"; break;
+        case "Đang giao hàng": statusClass = "badge-primary"; break;
+        case "Giao hàng thành công": statusClass = "badge-success"; break;
+        case "Đã hủy": statusClass = "badge-danger"; break;
+        default: statusClass = "badge-secondary"; break;
+    }
+
+    <tr>
+        <td>@item.OrderId</td>
+        <td>@(item.User?.FullName ?? "N/A")</td>
+        <td>@item.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+        <td>@item.TotalAmount.ToString("N0") đ</td>
+        <td>@(item.PhuongThucThanhToan?.TenPhuongThuc ?? "N/A")</td>
+        <td><span class="badge @statusClass">@statusText</span></td>
+        <td>
+            <button class="btn btn-sm btn-info btn-view-detail" data-order-id="@item.OrderId">
+                <i class="fas fa-eye"></i> Xem chi tiết
+            </button>
+        </td>
+    </tr>
+}

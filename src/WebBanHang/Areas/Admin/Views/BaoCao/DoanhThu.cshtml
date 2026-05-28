@@ -1,0 +1,148 @@
+﻿@{
+    Layout = "../Shared/_Layout.cshtml";
+}
+
+<!-- Thêm Chart.js và Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+
+<div class="container mt-4">
+    <h2>Thống Kê</h2>
+
+    <!-- Phần 1: Biểu đồ doanh thu theo tháng -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h4>Thống kê doanh thu từ tháng trong năm</h4>
+            <div class="form-group">
+                <label for="yearSelect">Chọn Năm:</label>
+                <select id="yearSelect" class="form-control" style="width: 200px; display: inline-block;">
+                    @for (int y = DateTime.Now.Year; y >= DateTime.Now.Year - 4; y--)
+                    {
+                        <option value="@y" @(y == ViewBag.SelectedYear ? "selected" : "")>@y</option>
+                    }
+                </select>
+            </div>
+            <canvas id="monthlyRevenueChart" height="100"></canvas>
+        </div>
+    </div>
+
+    <!-- Phần 2: Bảng số lượng sản phẩm bán được theo tháng -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h4>Số lượng sản phẩm bán được theo tháng năm @ViewBag.SelectedYear</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Tên sản phẩm</th>
+                        <th>Hình ảnh sản phẩm</th>
+                        <th>Tháng 3</th>
+                        <th>Tháng 4</th>
+                        <th>Tổng số lượng bán</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in (List<WebBanHang.Models.ProductSales>)ViewBag.ProductSales)
+                    {
+                        <tr>
+                            <td>@product.FoodName</td>
+                            <td>
+                                <img src="@Url.Content(product.ImageURL)" alt="@product.FoodName" style="width: 50px; height: 50px;" onerror="this.src='/images/baocao.png';" />
+                            </td>
+                            <td>@(product.SalesByMonth.FirstOrDefault(m => m.Month == 3)?.Quantity ?? 0)</td>
+                            <td>@(product.SalesByMonth.FirstOrDefault(m => m.Month == 4)?.Quantity ?? 0)</td>
+                            <td>@product.TotalSold</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Phần 3: Biểu đồ doanh thu 5 năm gần nhất -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h4>Thống kê doanh thu 5 năm gần nhất</h4>
+            <canvas id="yearlyRevenueChart" height="100"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+// Dữ liệu cho biểu đồ doanh thu theo tháng
+const monthlyRevenueData = @Html.Raw(Json.Encode(((List<WebBanHang.Models.MonthlyRevenue>)ViewBag.MonthlyRevenue).Select(m => m.TotalRevenue)));
+const monthlyLabels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+
+// Vẽ biểu đồ doanh thu theo tháng
+const monthlyRevenueChart = new Chart(document.getElementById('monthlyRevenueChart'), {
+    type: 'bar',
+    data: {
+        labels: monthlyLabels,
+        datasets: [{
+            label: 'Total Revenue By Month',
+            data: monthlyRevenueData,
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Doanh Thu (VND)'
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Tháng'
+                }
+            }
+        }
+    }
+});
+
+// Dữ liệu cho biểu đồ doanh thu 5 năm gần nhất
+const yearlyRevenueData = @Html.Raw(Json.Encode(((List<WebBanHang.Models.YearlyRevenue>)ViewBag.YearlyRevenue).Select(y => y.TotalRevenue)));
+const yearlyLabels = @Html.Raw(Json.Encode(((List<WebBanHang.Models.YearlyRevenue>)ViewBag.YearlyRevenue).Select(y => y.Year)));
+
+// Vẽ biểu đồ doanh thu 5 năm gần nhất
+const yearlyRevenueChart = new Chart(document.getElementById('yearlyRevenueChart'), {
+    type: 'bar',
+    data: {
+        labels: yearlyLabels,
+        datasets: [{
+            label: 'Total Revenue By Year',
+            data: yearlyRevenueData,
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Doanh Thu (VND)'
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Năm'
+                }
+            }
+        }
+    }
+});
+
+// Xử lý sự kiện khi thay đổi năm
+$('#yearSelect').change(function () {
+    var selectedYear = $(this).val();
+    window.location.href = '@Url.Action("DoanhThu", "BaoCao")?year=' + selectedYear;
+});
+</script>

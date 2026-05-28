@@ -1139,7 +1139,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="WebAppDBEntities4" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="WebAppDBEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Accounts" EntityType="Self.Account" />
           <EntitySet Name="AccRoles" EntityType="Self.AccRole" />
           <EntitySet Name="Categories" EntityType="Self.Category" />
@@ -1282,7 +1282,7 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="WebAppDBModelStoreContainer" CdmEntityContainer="WebAppDBEntities4">
+        <EntityContainerMapping StorageEntityContainer="WebAppDBModelStoreContainer" CdmEntityContainer="WebAppDBEntities">
           <EntitySetMapping Name="Accounts">
             <EntityTypeMapping TypeName="WebAppDBModel.Account">
               <MappingFragment StoreEntitySet="Account">

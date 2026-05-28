@@ -1,0 +1,15 @@
+﻿@model WebBanHang.Models.Staff
+
+@{
+    ViewBag.Title = "Xóa nhân viên";
+}
+
+<h2>Xóa nhân viên</h2>
+
+<p>Bạn có chắc chắn muốn xóa nhân viên <strong>@Model.FullName</strong> không?</p>
+
+<form method="post">
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-danger">Xóa</button>
+    <a href="@Url.Action("Index", "NhanVien")" class="btn btn-secondary">Hủy</a>
+</form>

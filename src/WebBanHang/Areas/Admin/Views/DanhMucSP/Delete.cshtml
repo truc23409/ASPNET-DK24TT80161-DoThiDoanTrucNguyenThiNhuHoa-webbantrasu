@@ -1,0 +1,20 @@
+﻿@model WebBanHang.Models.Category
+
+@{
+    ViewBag.Title = "Xác nhận xóa danh mục";
+}
+
+<h2>Xác nhận xóa danh mục</h2>
+
+<div>
+    <h3>@Model.CategoryName</h3>
+
+    <p><strong>ID danh mục:</strong> @Model.CategoryId</p>
+
+    @using (Html.BeginForm("Delete", "DanhMucSP", new { id = Model.CategoryId }, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <input type="submit" value="Xác nhận xóa" class="btn btn-danger" />
+        <a href="@Url.Action("DanhMucSP", "DanhMucSP")" class="btn btn-secondary">Hủy</a>
+    }
+</div>

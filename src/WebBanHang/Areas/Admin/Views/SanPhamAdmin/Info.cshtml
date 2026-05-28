@@ -1,0 +1,544 @@
+﻿@model IEnumerable<WebBanHang.Models.Food>
+
+@{
+    Layout = "../Shared/_Layout.cshtml";
+    ViewBag.Title = "Danh sách món ăn";
+}
+@Html.AntiForgeryToken()
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+<div class="page-container">
+    <div class="category-header">
+        <h2 class="category-title">Danh sách món ăn</h2>
+    </div>
+
+    <div class="top-actions">
+        <a href="@Url.Action("Add", "SanPhamAdmin")" class="btn-add">
+            <i class="fas fa-plus"></i>
+        </a>
+        <div class="search-container">
+            <input type="text" id="searchBox" placeholder="Search" onkeyup="searchFood()">
+            <button class="search-btn">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="customControls" style="display: flex; align-items: center; gap: 10px;">
+        <div id="dataTables_length"></div> <!-- DataTables render "Show entries" -->
+        <button id="sortButton" type="button" class="btn btn-primary">
+            <svg id="sortIcon" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M7 10l5-5 5 5H7zm0 4h10l-5 5-5-5z" />
+            </svg>
+            Sort
+        </button>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <p class="alert alert-warning">Không có món ăn nào để hiển thị.</p>
+    }
+    else
+    {
+        <form id="deleteForm">
+            @Html.AntiForgeryToken()
+        </form>
+
+        <table class="table table-bordered table-striped category-table" id="foodTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên món</th>
+                    <th>Loại</th>
+                    <th>Hình ảnh</th>
+                    <th>Nguyên liệu</th>
+                    <th>Giá gốc</th>
+                    <th>Giảm giá (%)</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày cập nhật</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.FoodId</td>
+                        <td>@item.FoodName</td>
+                        <td>@(item.Category != null ? item.Category.CategoryName : "Không có")</td>
+                        <td>
+                            <img src="@(!string.IsNullOrEmpty(item.ImageURL) ? Url.Content(item.ImageURL) : "/Content/Images/no-image.png")"
+                                 alt="@item.FoodName" width="80" height="80" style="border-radius: 5px; object-fit: cover;" />
+                        </td>
+
+                        <td>
+                            @(item.FoodIngredients != null && item.FoodIngredients.Any()
+                                ? string.Join(", ", item.FoodIngredients.Select(fi => fi.Ingredient.IngredientName))
+                                : "Không có")
+                        </td>
+
+                        <td>@string.Format("{0:N0} đ", item.Price)</td>
+                        <td>@item.Discount%</td>
+                        <td>@(item.Status == true ? "Còn bán" : "Ngừng bán")</td>
+                        <td>@(item.UpdatedDate.HasValue ? item.UpdatedDate.Value.ToString("dd/MM/yyyy") : "Chưa cập nhật")</td>
+                        <td class="action-buttons" style="height: 120px;">
+                            <a href="@Url.Action("Edit", "SanPhamAdmin", new { id = item.FoodId })" class="btn btn-success">
+
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="javascript:void(0);" class="btn btn-danger btn-delete"
+                               data-id="@item.FoodId"
+                               data-name="@item.FoodName">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        var table = $('#foodTable').DataTable({
+            "paging": true,
+            "lengthMenu": [5, 10, 25, 50],
+            "pageLength": 10,
+            "ordering": true,
+            "info": true,
+            "searching": false, // Để hỗ trợ tìm kiếm trên toàn bảng
+            "destroy": true,  // Tránh lỗi DataTable bị khởi tạo lại
+            "columnDefs": [
+                { "orderable": false, "targets": [0, 2, 3, 4, 5, 6, 7, 8, 9] }
+            ],
+            "language": {
+                "lengthMenu": "Show _MENU_ ",
+                "zeroRecords": "Không tìm thấy món ăn nào",
+                "info": "Hiển thị _START_ đến _END_ trong tổng số _TOTAL_ món ăn",
+                "infoEmpty": "Không có dữ liệu để hiển thị",
+                "infoFiltered": "(lọc từ _MAX_ món ăn)",
+                "paginate": {
+                    "first": "Đầu",
+                    "last": "Cuối",
+                    "next": "Tiếp",
+                    "previous": "Trước"
+                }
+            },
+            "drawCallback": function () {
+                $("#foodTable_length").appendTo("#dataTables_length"); // Di chuyển phần "Show entries" sau mỗi lần vẽ lại bảng
+            }
+        });
+
+        // Toggle sắp xếp khi nhấn nút Sort (chỉ sắp xếp cột "Tên món" - index 1)
+        var sortDirection = 'asc';
+
+        $("#sortButton").on("click", function () {
+            let icon = $("#sortIcon");
+
+            // Thực hiện sắp xếp
+            table.order([1, sortDirection]).draw();
+
+            // Đảo ngược hướng sắp xếp
+            sortDirection = (sortDirection === 'asc') ? 'desc' : 'asc';
+
+            // Đổi icon mũi tên
+            icon.html(sortDirection === "asc"
+                ? '<path d="M7 10l5-5 5 5H7zm0 4h10l-5 5-5-5z"/>'
+                : '<path d="M7 14l5 5 5-5H7zm0-4h10l-5-5-5 5z"/>'
+            );
+        });
+
+                $(document).on("click", ".btn-delete", function () {
+                    var id = $(this).data("id");
+                    var name = $(this).data("name");
+                    var token = $('input[name="__RequestVerificationToken"]').val();
+
+
+
+                    Swal.fire({
+                        title: 'Bạn có chắc chắn?',
+                        text: "Xóa sản phẩm: " + name,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Xóa',
+                        cancelButtonText: 'Hủy'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "@Url.Action("DeleteProduct", "SanPhamAdmin", new { area = "Admin" })",
+                                type: 'POST',
+                                data: {
+                                    id: id,
+                                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                                },
+
+                                success: function (res) {
+                                    if (res.success) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: res.message,
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        }).then(() => {
+                                            location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire('Lỗi', res.message, 'error');
+                                    }
+                                },
+                                error: function () {
+                                    Swal.fire('Lỗi', 'Không thể xóa sản phẩm', 'error');
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+
+
+    // Tìm kiếm trong bảng
+    function searchFood() {
+        var input, filter, table, tr, tdArray, i, txtValue, foundCount = 0;
+        input = document.getElementById("searchBox");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("foodTable");
+        tr = table.getElementsByTagName("tr");
+
+        for (i = 1; i < tr.length; i++) {
+            tdArray = tr[i].getElementsByTagName("td");
+            let found = false;
+            for (let td of tdArray) {
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            tr[i].style.display = found ? "" : "none";
+            if (found) foundCount++;
+        }
+
+        let alertBox = document.getElementById("noResultAlert");
+        if (!foundCount) {
+            if (!alertBox) {
+                let newAlert = document.createElement("p");
+                newAlert.id = "noResultAlert";
+                newAlert.className = "alert alert-warning";
+                newAlert.innerText = "Không tìm thấy kết quả.";
+                table.parentNode.insertBefore(newAlert, table);
+            }
+        } else {
+            if (alertBox) alertBox.remove();
+        }
+    }
+</script>
+
+
+<style>
+
+    #customControls {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+        gap: 10px; /* Khoảng cách giữa các phần tử */
+    }
+
+    #dataTables_length select {
+        height: 40px; /* Đặt cùng chiều cao với nút Sort */
+        padding: 8px 16px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        background-color: white;
+        cursor: pointer;
+    }
+
+    #sortButton {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: #f3e8ff; /* Màu tím nhạt */
+        color: #7c3aed; /* Màu tím */
+        font-weight: bold;
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s;
+        height: 40px; /* Cùng chiều cao với select */
+    }
+
+        #sortButton:hover {
+            background-color: #e9d5ff;
+        }
+
+    #sortIcon {
+        width: 16px;
+        height: 16px;
+    }
+
+
+    /* Ẩn mũi tên sort trên tiêu đề bảng */
+    .dataTables_wrapper th {
+        pointer-events: none; /* Không cho click vào cột */
+    }
+
+        .dataTables_wrapper th::after,
+        .dataTables_wrapper th::before {
+            display: none !important; /* Ẩn mũi tên */
+        }
+
+    #customControls {
+        display: flex;
+        align-items: center;
+        gap: 10px; /* Khoảng cách giữa các phần tử */
+    }
+
+    #sortButton {
+        padding: 5px 10px;
+        font-size: 14px;
+    }
+
+    #foodTable thead th {
+        pointer-events: none; /* Vô hiệu hóa click vào tiêu đề */
+    }
+
+    th {
+        pointer-events: none; /* Tắt chức năng click vào tiêu đề */
+    }
+
+        th:after, th:before {
+            display: none !important; /* Ẩn mũi tên sắp xếp */
+        }
+
+    .dataTables_wrapper table {
+        border: none !important;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border: none; /* Loại bỏ viền của bảng */
+    }
+    #foodTable th,
+    #foodTable td {
+        padding: 5px; /* Giảm khoảng cách trong ô */
+        font-size: 14px; /* Giảm kích thước chữ */
+        white-space: nowrap; /* Không xuống dòng */
+    }
+
+    #foodTable img {
+        width: 50px; /* Giảm kích thước ảnh */
+        height: 50px;
+    }
+
+    td {
+        border: none;
+        padding: 8px;
+        text-align: left;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    th {
+        border: 1px solid #ddd !important;
+    }
+
+    tr:nth-child(odd) {
+        background-color: white;
+    }
+
+    .category-header {
+        background-color: #ffff;
+        padding: 20px 30px;
+        border-radius: 0 25px 25px 0;
+        margin-bottom: 20px;
+    }
+
+    .category-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .top-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .search-container {
+        position: relative;
+        width: 250px;
+    }
+
+        .search-container input {
+            width: 100%;
+            padding: 8px 35px 8px 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+    .search-btn {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        color: #007bff;
+        font-size: 16px;
+    }
+
+    .btn-add {
+        padding: 10px 15px;
+        background-color: #83aafd;
+        color: white;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+        .btn-add:hover {
+            background-color: #83aafd;
+        }
+
+    .category-table th, .category-table td {
+        padding: 4px 8px;
+        border: 1px solid #ddd;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    table td {
+        vertical-align: middle !important; /* Căn giữa theo chiều dọc */
+        text-align: center; /* Căn giữa nội dung theo chiều ngang (nếu cần) */
+    }
+
+    .table td:last-child {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+    }
+
+    /* Đảm bảo bảng tự động điều chỉnh kích thước */
+    table {
+        width: 100%;
+        table-layout: auto; /* Thay fixed thành auto */
+        border-collapse: collapse;
+    }
+
+    /* Đặt chiều rộng tối thiểu cho cột hành động */
+    th:last-child, td:last-child {
+        min-width: 140px; /* Cột rộng tối thiểu 140px */
+        text-align: center;
+    }
+
+    /* Căn chỉnh lại các nút hành động */
+    td.action-buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px; /* Khoảng cách giữa nút */
+        height: 100%;
+    }
+
+        /* Đảm bảo nút không bị nhỏ */
+        td.action-buttons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 5px;
+        }
+
+    /* Đảm bảo mọi ô có chiều cao đồng đều */
+    td {
+        vertical-align: middle !important;
+    }
+
+
+        td.action-buttons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+        }
+
+    .action-buttons {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
+
+    th:last-child, td:last-child {
+        min-width: 140px; /* Đảm bảo đủ không gian */
+        text-align: center;
+        white-space: nowrap; /* Ngăn xuống dòng */
+    }
+
+    .action-buttons a {
+        white-space: nowrap; /* Đảm bảo nút không bị xuống dòng */
+        width: 40px; /* Đảm bảo kích thước cố định */
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .btn-edit, .btn-delete {
+        padding: 6px 12px;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+    }
+
+    .btn-edit {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background-color: #218838;
+    }
+
+    .btn-delete:hover {
+        background-color: #c82333;
+    }
+</style>

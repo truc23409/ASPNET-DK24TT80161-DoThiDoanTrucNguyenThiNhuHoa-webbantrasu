@@ -1,0 +1,209 @@
+﻿@model WebBanHang.Models.Ingredient
+
+<h2>Thêm  nguyên liệu</h2>
+<hr />
+
+<div class="container">
+    @using (Html.BeginForm("Add", "KhoAdmin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="IngredientName">Tên Nguyên Liệu:</label>
+                    @Html.TextBoxFor(model => model.IngredientName, new { @class = "form-control validate", id = "IngredientName" })
+                    <span class="text-danger error-message" id="error-IngredientName"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="SoLuong">Số lượng:</label>
+                    @Html.TextBoxFor(model => model.SoLuong, new { @class = "form-control validate", id = "SoLuong", type = "number", min = "1" })
+                    <span class="text-danger error-message" id="error-SoLuong"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="PhanLoai">Phân loại:</label>
+                    @Html.TextBoxFor(model => model.PhanLoai, new { @class = "form-control validate", id = "PhanLoai" })
+                    <span class="text-danger error-message" id="error-PhanLoai"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="LastUpdated">Cập nhật lần cuối:</label>
+                    @Html.TextBoxFor(model => model.LastUpdated, new { @class = "form-control validate", id = "LastUpdated", type = "datetime-local" })
+                    <span class="text-danger error-message" id="error-LastUpdated"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Ảnh nguyên liệu</label>
+                    <input type="file" id="ImageFile" name="ImageFile" class="form-control" accept="image/*" onchange="showPreview(event)" />
+
+                    <img id="previewImage" src="@Url.Content(Model.ImageURL ?? "~/images/no-image.png")"
+                         alt="Ảnh nguyên liệu" width="150" height="150"
+                         style="display:block; margin-top:10px;" />
+
+                    <span id="error-ImageURL" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-3">Lưu thay đổi</button>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        var checkIngredientUrl = "@Html.Raw(Url.Action("CheckIngredientName", "KhoAdmin"))";
+
+        // Hiển thị ảnh khi chọn file
+        function showPreview(event) {
+            let reader = new FileReader();
+            reader.onload = function () {
+                $("#previewImage").attr("src", reader.result).show();
+                $("#error-ImageURL").text("");
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        $(document).ready(function () {
+            // Kiểm tra input khi mất focus
+            $("#IngredientName").blur(function () {
+                let name = $(this).val().trim();
+                if (name === "") {
+                    showError("#IngredientName", "Tên nguyên liệu không được để trống.");
+                } else {
+                    $.ajax({
+                        url: checkIngredientUrl,
+                        type: "POST",
+                        data: { name: name, id: @Html.Raw(Json.Encode(Model.IngredientId)) },
+                        success: function (response) {
+                            if (response.exists) {
+                                showError("#IngredientName", "Tên nguyên liệu đã tồn tại.");
+                            } else {
+                                hideError("#IngredientName");
+                            }
+                        },
+                        error: function () {
+                            console.error("Lỗi kết nối đến server.");
+                        }
+                    });
+                }
+            });
+
+            $("#SoLuong").blur(function () {
+                let value = parseInt($(this).val());
+                if (isNaN(value) || value <= 0) {
+                    showError("#SoLuong", "Số lượng phải lớn hơn 0.");
+                } else {
+                    hideError("#SoLuong");
+                }
+            });
+
+            $("#PhanLoai").blur(function () {
+                if ($(this).val().trim() === "") {
+                    showError("#PhanLoai", "Phân loại không được để trống.");
+                } else {
+                    hideError("#PhanLoai");
+                }
+            });
+
+            $("#LastUpdated").blur(function () {
+                let now = new Date();
+                let selectedDate = new Date($(this).val());
+                if ($(this).val().trim() === "" || selectedDate > now) {
+                    showError("#LastUpdated", "Ngày cập nhật không hợp lệ hoặc lớn hơn hiện tại.");
+                } else {
+                    hideError("#LastUpdated");
+                }
+            });
+
+            // Kiểm tra trước khi submit form
+            $("form").submit(function (event) {
+                let isValid = true;
+
+                $("#IngredientName, #SoLuong, #PhanLoai, #LastUpdated").each(function () {
+                    $(this).blur();
+                    if ($(this).hasClass("is-invalid")) {
+                        isValid = false;
+                    }
+                });
+
+                let fileInput = $("#ImageFile")[0];
+                if (fileInput.files.length === 0) {
+                    showError("#error-ImageURL", "Vui lòng chọn một file ảnh.");
+                    isValid = false;
+                } else {
+                    let file = fileInput.files[0];
+                    let allowedExtensions = ["png", "jpg", "jpeg", "gif", "webp"];
+                    let fileExt = file.name.split('.').pop().toLowerCase();
+
+                    if (!allowedExtensions.includes(fileExt)) {
+                        showError("#error-ImageURL", "Chỉ chấp nhận file ảnh (.png, .jpg, .jpeg, .gif, .webp).");
+                        isValid = false;
+                    } else {
+                        hideError("#error-ImageURL");
+                    }
+                }
+
+                if (!isValid) {
+                    event.preventDefault();
+                }
+            });
+        });
+$("form").submit(function (event) {
+    event.preventDefault(); // Ngăn chặn reload trang
+
+    let isValid = true;
+
+    $("#IngredientName, #SoLuong, #PhanLoai, #LastUpdated").each(function () {
+        $(this).blur();
+        if ($(this).hasClass("is-invalid")) {
+            isValid = false;
+        }
+    });
+
+    let fileInput = $("#ImageFile")[0];
+    if (fileInput.files.length === 0) {
+        showError("#error-ImageURL", "Vui lòng chọn một file ảnh.");
+        isValid = false;
+    }
+
+    if (!isValid) return;
+
+    let formData = new FormData(this);
+
+    $.ajax({
+        url: $(this).attr("action"),
+        type: "POST",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (response) {
+            if (response.success) {
+                alert(response.message);
+                window.location.href = "/Admin/KhoAdmin/KhoAdmin"; // Chuyển về danh sách
+            } else {
+                alert(response.message);
+            }
+        },
+        error: function () {
+            alert("Lỗi kết nối!");
+        }
+    });
+});
+        // Hiển thị lỗi
+        function showError(selector, message) {
+            $(selector).addClass("is-invalid");
+            $(selector).siblings(".error-message").text(message);
+        }
+
+        // Ẩn lỗi
+        function hideError(selector) {
+            $(selector).removeClass("is-invalid");
+            $(selector).siblings(".error-message").text("");
+        }
+    </script>
+}

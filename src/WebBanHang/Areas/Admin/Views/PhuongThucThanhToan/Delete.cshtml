@@ -1,0 +1,20 @@
+﻿@model WebBanHang.Models.PhuongThucThanhToan
+
+@{
+    ViewBag.Title = "Xác nhận xóa phương thức thanh toán";
+}
+
+<h2>Xác nhận xóa phương thức thanh toán</h2>
+
+<div>
+    <h3>@Model.TenPhuongThuc</h3>
+
+    <p><strong>ID phương thức:</strong> @Model.Id</p>
+
+    @using (Html.BeginForm("Delete", "PhuongThucThanhToan", new { id = Model.Id }, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <input type="submit" value="Xác nhận xóa" class="btn btn-danger" />
+        <a href="@Url.Action("Index", "PhuongThucThanhToan")" class="btn btn-secondary">Hủy</a>
+    }
+</div>

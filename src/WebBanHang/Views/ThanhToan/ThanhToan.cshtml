@@ -7,134 +7,348 @@
     var orderDate = ViewBag.OrderDate ?? DateTime.Now;
 }
 
-<div class="billing-details">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <form id="profile-form" method="post" action="@Url.Action("UpdateUser", "ThanhToan")" class="billing-form">
-                    <div class="form-group">
-                        <label>Username*</label>
-                        <input type="text" id="username" class="form-control" value="@Model.Username" readonly />
-                        <span id="username-error" class="text-danger"></span>
-                    </div>
+<!-- HERO BANNER -->
+<section class="banner">
 
-                    <div class="form-group">
-                        <label>FullName*</label>
-                        <input type="text" id="fullname" class="form-control" name="FullName" value="@Model.FullName" required />
-                        <span id="fullname-error" class="text-danger"></span>
-                    </div>
+    <div id="carouselBanner"
+         class="carousel slide"
+         data-bs-ride="carousel">
 
-                    <div class="form-group">
-                        <label>Email*</label>
-                        <input type="email" id="email" class="form-control" name="Email" value="@Model.Email" required />
-                        <span id="email-error" class="text-danger"></span>
-                    </div>
+        <div class="carousel-inner">
 
-                    <div class="form-group">
-                        <label>Phone Number*</label>
-                        <input type="text" id="phone" class="form-control" name="Phone" value="@Model.Phone" required />
-                        <span id="phone-error" class="text-danger"></span>
-                    </div>
+            <!-- SLIDE 1 -->
+            <div class="carousel-item active">
 
-                    <div class="form-group">
-                        <label>Address*</label>
-                        <input type="text" id="address" class="form-control" name="Address" value="@Model.Address" required />
-                        <span id="address-error" class="text-danger"></span>
-                    </div>
+                <video autoplay muted loop class="d-block w-100 banner-video">
+                    <source src="@Url.Content("~/video/vd6.mp4")" type="video/mp4" />
+                </video>
 
-                    <button type="submit" class="btn btn-primary billing-button">Cập nhật</button>
-                </form>
+                <div class="banner-overlay">
+                    <h1>
+                        Billing details
+                    </h1>
 
-                <form action="@Url.Action("ThanhToan", "ThanhToan")" method="post" style="margin-top: 20px;" class="billing-form">
-                    <div class="form-group">
-                        <label>Địa chỉ giao hàng*</label>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <select name="address" id="delivery-address" class="form-control" required style="flex: 1;">
-                                <option value="" disabled selected>Chọn địa chỉ giao hàng</option>
-                                @foreach (var addr in ViewBag.DeliveryAddresses as List<WebBanHang.Models.DeliveryAddress>)
-                                {
-                                    <option value="@addr.AddressId" @(addr.IsDefault ? "selected" : "")>@addr.Address @(addr.IsDefault ? "(Mặc định)" : "")</option>
-                                }
-                                <option value="new">Thêm địa chỉ mới</option>
-                            </select>
-                            <button type="button" id="update-address-btn" class="btn btn-primary" style="padding: 8px 15px;">Cập nhật</button>
-                        </div>
-                    </div>
+                    <p>
+                        We’re always here to listen, support and share lovely moments with you 💖
+                    </p>
 
-                    <div class="form-group" id="new-address-group" style="display: none;">
-                        <label>Địa chỉ mới*</label>
-                        <input type="text" class="form-control" name="newAddress" id="new-address" placeholder="Nhập địa chỉ mới" />
-                        <span id="new-address-error" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group payment-methods">
-                        <h4>Phương thức thanh toán*</h4>
-                        @if (ViewBag.PaymentMethods != null && (ViewBag.PaymentMethods as List<WebBanHang.Models.PhuongThucThanhToan>).Count > 0)
-                        {
-                            foreach (var pm in ViewBag.PaymentMethods as List<WebBanHang.Models.PhuongThucThanhToan>)
-                            {
-                                <div class="form-check">
-                                    <input type="radio" name="paymentMethodId" value="@pm.Id"
-                                           @(pm.Id == 1 ? "checked" : "") required />
-                                    <label>@pm.TenPhuongThuc</label>
-                                </div>
-                            }
-                        }
-                        else
-                        {
-                            <p class="text-danger">Không có phương thức thanh toán nào! Vui lòng liên hệ quản trị viên.</p>
-                        }
-                    </div>
-
-                    <button type="submit" class="btn btn-primary billing-button">PLACE ORDER</button>
-                </form>
-
-                @if (TempData["Error"] != null)
-                {
-                    <div class="alert alert-danger mt-3">@TempData["Error"]</div>
-                }
-            </div>
-
-            <div class="col-md-6 sidebar-checkout">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Products</th>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Quantity</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in cartItems)
-                        {
-                            <tr>
-                                <td><img src="@(string.IsNullOrEmpty(item.Food.ImageURL) ? Url.Content("~/images/no-image.png") : Url.Content(item.Food.ImageURL))" width="50" alt="@item.Food.FoodName" /></td>
-                                <td>@item.Food.FoodName @(item.Size != null ? $"({item.Size.SizeName})" : "")</td>
-                                <td>@((item.TotalPrice / item.SoLuong).ToString("N0")) đ</td>
-                                <td>@item.SoLuong</td>
-                                <td>@item.TotalPrice.ToString("N0") đ</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-
-                <div class="summary">
-                    <p>Subtotal: @totalAmount.ToString("N0") đ</p>
-                    <p>Shipping: 20,000 đ</p>
-                    <p>Discount: 0 đ</p>
-                    <h4>TOTAL: <span class="text-danger">@((totalAmount + 20000).ToString("N0")) đ</span></h4>
                 </div>
 
-                <a href="@Url.Action("GioHang", "GioHang")" class="btn btn-outline-secondary">BACK TO CART</a>
+            </div>
+
+            <!-- SLIDE 2 -->
+            <div class="carousel-item">
+
+                <video autoplay muted loop class="d-block w-100 banner-video">
+                    <source src="@Url.Content("~/video/vd9.mp4")" type="video/mp4" />
+                </video>
+
+                <div class="banner-overlay">
+
+                    <span class="mini-title">
+                        Rosabelle Tea ✨
+                    </span>
+
+                    <h1>
+                        Lovely Space For Lovely People
+                    </h1>
+
+                    <p>
+                        Coffee • Tea • Cakes • Cute little happiness 🌸
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- CONTROLS -->
+        <button class="carousel-control-prev"
+                type="button"
+                data-bs-target="#carouselBanner"
+                data-bs-slide="prev">
+
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+
+        </button>
+
+        <button class="carousel-control-next"
+                type="button"
+                data-bs-target="#carouselBanner"
+                data-bs-slide="next">
+
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+
+        </button>
+
+    </div>
+
+</section>
+
+<div class="billing-details">
+    <div class="container">
+        <div class="checkout-wrapper">
+            <div class="row">
+
+                <!-- LEFT -->
+                <div class="col-md-6">
+                    <div class="checkout-section">
+                        <div class="section-heading">
+                            <span class="section-subtitle">ACCOUNT</span>
+                            <h2>Your Information</h2>
+                        </div>
+
+                        <form id="profile-form"
+                              method="post"
+                              action="@Url.Action("UpdateUser", "ThanhToan")"
+                              class="billing-form">
+
+                            <div class="form-group">
+                                <label>Username*</label>
+                                <input type="text"
+                                       id="username"
+                                       class="form-control"
+                                       value="@Model.Username"
+                                       readonly />
+                                <span id="username-error" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label>FullName*</label>
+                                <input type="text"
+                                       id="fullname"
+                                       class="form-control"
+                                       name="FullName"
+                                       value="@Model.FullName"
+                                       required />
+                                <span id="fullname-error" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Email*</label>
+                                <input type="email"
+                                       id="email"
+                                       class="form-control"
+                                       name="Email"
+                                       value="@Model.Email"
+                                       required />
+                                <span id="email-error" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Phone Number*</label>
+                                <input type="text"
+                                       id="phone"
+                                       class="form-control"
+                                       name="Phone"
+                                       value="@Model.Phone"
+                                       required />
+                                <span id="phone-error" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Address*</label>
+                                <input type="text"
+                                       id="address"
+                                       class="form-control"
+                                       name="Address"
+                                       value="@Model.Address"
+                                       required />
+                                <span id="address-error" class="text-danger"></span>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary billing-button">
+                                UPDATE PROFILE
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="checkout-section mt-4">
+                        <div class="section-heading">
+                            <span class="section-subtitle">CHECKOUT</span>
+                            <h2>Shipping & Payment</h2>
+                        </div>
+
+                        <form action="@Url.Action("ThanhToan", "ThanhToan")"
+                              method="post"
+                              class="billing-form">
+
+                            <div class="form-group">
+                                <label>Địa chỉ giao hàng*</label>
+
+                                <div class="address-row">
+                                    <select name="address"
+                                            id="delivery-address"
+                                            class="form-control"
+                                            required>
+
+                                        <option value="" disabled selected>
+                                            Chọn địa chỉ giao hàng
+                                        </option>
+
+                                        @foreach (var addr in ViewBag.DeliveryAddresses as List<WebBanHang.Models.DeliveryAddress>)
+                                        {
+                                            <option value="@addr.AddressId"
+                                                    @(addr.IsDefault ? "selected" : "")>
+                                                @addr.Address @(addr.IsDefault ? "(Mặc định)" : "")
+                                            </option>
+                                        }
+
+                                        <option value="new">Thêm địa chỉ mới</option>
+                                    </select>
+
+                                    <button type="button"
+                                            id="update-address-btn"
+                                            class="btn btn-primary address-btn">
+                                        Cập nhật
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group"
+                                 id="new-address-group"
+                                 style="display: none;">
+
+                                <label>Địa chỉ mới*</label>
+
+                                <input type="text"
+                                       class="form-control"
+                                       name="newAddress"
+                                       id="new-address"
+                                       placeholder="Nhập địa chỉ mới" />
+
+                                <span id="new-address-error"
+                                      class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group payment-methods">
+                                <h4>Phương thức thanh toán*</h4>
+
+                                @if (ViewBag.PaymentMethods != null &&
+                                    (ViewBag.PaymentMethods as List<WebBanHang.Models.PhuongThucThanhToan>).Count > 0)
+                                {
+                                    foreach (var pm in ViewBag.PaymentMethods as List<WebBanHang.Models.PhuongThucThanhToan>)
+                                    {
+                                        <div class="form-check">
+                                            <input type="radio"
+                                                   name="paymentMethodId"
+                                                   value="@pm.Id"
+                                                   @(pm.Id == 1 ? "checked" : "")
+                                                   required />
+
+                                            <label>@pm.TenPhuongThuc</label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-danger">
+                                        Không có phương thức thanh toán nào!
+                                        Vui lòng liên hệ quản trị viên.
+                                    </p>
+                                }
+                            </div>
+
+                            <button type="submit"
+                                    class="btn btn-primary billing-button">
+                                PLACE ORDER
+                            </button>
+                        </form>
+                    </div>
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger mt-3">
+                            @TempData["Error"]
+                        </div>
+                    }
+                </div>
+
+                <!-- RIGHT -->
+                <div class="col-md-6">
+                    <div class="sidebar-checkout">
+
+                        <div class="summary-header">
+                            <span class="section-subtitle">SUMMARY</span>
+                            <h2>Your Order</h2>
+                        </div>
+
+                        <div class="checkout-products">
+                            @foreach (var item in cartItems)
+                            {
+                                <div class="checkout-item">
+                                    <div class="checkout-item-image">
+                                        <img src="@(string.IsNullOrEmpty(item.Food.ImageURL)
+                                            ? Url.Content("~/images/no-image.png")
+                                            : Url.Content(item.Food.ImageURL))"
+                                             alt="@item.Food.FoodName" />
+                                    </div>
+
+                                    <div class="checkout-item-content">
+                                        <h5>
+                                            @item.Food.FoodName
+                                            @(item.Size != null ? $"({item.Size.SizeName})" : "")
+                                        </h5>
+
+                                        <div class="checkout-meta">
+                                            <span>
+                                                @((item.TotalPrice / item.SoLuong).ToString("N0")) đ
+                                            </span>
+
+                                            <span>
+                                                x @item.SoLuong
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="checkout-item-total">
+                                        @item.TotalPrice.ToString("N0") đ
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="summary">
+                            <div class="summary-line">
+                                <span>Subtotal</span>
+                                <span>@totalAmount.ToString("N0") đ</span>
+                            </div>
+
+                            <div class="summary-line">
+                                <span>Shipping</span>
+                                <span>20,000 đ</span>
+                            </div>
+
+                            <div class="summary-line">
+                                <span>Discount</span>
+                                <span>0 đ</span>
+                            </div>
+
+                            <div class="summary-total">
+                                <span>TOTAL</span>
+
+                                <span class="text-danger">
+                                    @((totalAmount + 20000).ToString("N0")) đ
+                                </span>
+                            </div>
+                        </div>
+
+                        <a href="@Url.Action("GioHang", "GioHang")"
+                           class="btn-back-cart">
+                            BACK TO CART
+                        </a>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Xử lý dropdown địa chỉ giao hàng
@@ -188,24 +402,27 @@
                     success: function (response) {
                         if (response.success) {
                             alert(response.message);
-                            // Cập nhật dropdown với danh sách địa chỉ mới
+
                             const addresses = response.addresses;
                             deliveryAddressSelect.innerHTML = '<option value="" disabled selected>Chọn địa chỉ giao hàng</option>';
+
                             addresses.forEach(addr => {
                                 const option = document.createElement('option');
                                 option.value = addr.AddressId;
                                 option.text = addr.Address + (addr.IsDefault ? ' (Mặc định)' : '');
+
                                 if (addr.Address === newAddress) {
                                     option.selected = true;
                                 }
+
                                 deliveryAddressSelect.appendChild(option);
                             });
+
                             const newOption = document.createElement('option');
                             newOption.value = 'new';
                             newOption.text = 'Thêm địa chỉ mới';
                             deliveryAddressSelect.appendChild(newOption);
 
-                            // Ẩn trường nhập địa chỉ mới
                             newAddressGroup.style.display = 'none';
                             newAddressInput.removeAttribute('required');
                             newAddressInput.value = '';
@@ -224,6 +441,7 @@
             form.addEventListener('submit', function (event) {
                 if (deliveryAddressSelect.value === 'new') {
                     const newAddress = newAddressInput.value.trim();
+
                     if (!/\S+/.test(newAddress)) {
                         event.preventDefault();
                         newAddressError.textContent = 'Địa chỉ mới không được để trống!';
@@ -232,9 +450,9 @@
                     }
                 }
 
-                // Xử lý thanh toán VNPay
                 const paymentMethodId = document.querySelector('input[name="paymentMethodId"]:checked').value;
-                if (paymentMethodId == '1') { // VNPay
+
+                if (paymentMethodId == '1') {
                     event.preventDefault();
 
                     $.ajax({
@@ -244,7 +462,7 @@
                         success: function (response) {
                             if (response.Success) {
                                 if (response.Url) {
-                                    window.location.href = response.Url; // Chuyển hướng đến URL thanh toán VNPay hoặc trang thành công
+                                    window.location.href = response.Url;
                                 }
                             } else {
                                 alert('Có lỗi xảy ra: ' + (response.Message || 'Không thể xử lý thanh toán.'));
@@ -257,7 +475,7 @@
                 }
             });
 
-            // Validate các trường khác (giữ nguyên)
+            // Validate các trường khác
             function validateField(input, errorElement, pattern, message) {
                 input.addEventListener('blur', function () {
                     if (!pattern.test(input.value.trim())) {
@@ -278,7 +496,7 @@
             validateField(
                 document.getElementById('email'),
                 document.getElementById('email-error'),
-                /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, // Sửa lỗi cú pháp @@
+                /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                 "Email không hợp lệ."
             );
 
@@ -314,7 +532,7 @@
                     },
                     {
                         value: email,
-                        pattern: /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, // Sửa lỗi cú pháp @@
+                        pattern: /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                         errorElement: document.getElementById('email-error'),
                         message: "Email không hợp lệ."
                     },
@@ -333,6 +551,7 @@
                 ];
 
                 let hasError = false;
+
                 validations.forEach(validation => {
                     if (!validation.pattern.test(validation.value)) {
                         validation.errorElement.textContent = validation.message;
@@ -358,18 +577,26 @@
                     return $.ajax({
                         url: '@Url.Action("UpdateUser", "ThanhToan")',
                         type: 'POST',
-                        data: { id: id, field: update.field, value: update.value },
+                        data: {
+                            id: id,
+                            field: update.field,
+                            value: update.value
+                        },
                         success: function (response) {
                             return response;
                         },
                         error: function (xhr, status, error) {
-                            return { success: false, message: `Lỗi khi gửi ${update.field}: ${error}` };
+                            return {
+                                success: false,
+                                message: `Lỗi khi gửi ${update.field}: ${error}`
+                            };
                         }
                     });
                 });
 
                 Promise.all(ajaxRequests).then((responses) => {
                     let allSuccess = responses.every(r => r.success);
+
                     if (allSuccess) {
                         alert("Cập nhật thành công!");
                         location.reload();
@@ -378,6 +605,7 @@
                             .filter(r => !r.success)
                             .map(r => r.message)
                             .join("\n");
+
                         alert("Cập nhật thất bại:\n" + errorMessages);
                     }
                 }).catch((error) => {
@@ -387,118 +615,373 @@
         });
     </script>
 }
+
 <style>
-    .billing-details .container {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
+    body {
+        background: #fffaf8;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    /* BANNER */
+
+    .banner {
         width: 100%;
-        max-width: 1200px;
-        margin: 50px auto;
-        padding: 20px;
+        overflow: hidden;
+        position: relative;
     }
 
-    .billing-details .row {
-        display: flex;
-        justify-content: space-between;
+    .banner-video {
         width: 100%;
-        max-width: 1000px;
-        margin: 0 auto;
-        align-items: stretch;
+        height: 700px;
+        object-fit: cover;
+        filter: brightness(0.65);
     }
 
-    .billing-details .col-md-6 {
-        width: 48%;
-        padding: 20px;
-        min-height: 450px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .billing-details .billing-form {
-        background: #f8f9fa;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        width: 100%;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .billing-details input,
-    .billing-details select {
-        width: 100%;
-        padding: 8px;
-        margin-top: 5px;
-        margin-bottom: 10px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-    }
-
-    .billing-details .sidebar-checkout {
-        width: 50%;
-        margin-top: 20px;
-        padding: 20px;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        max-height: 500px;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .billing-details .billing-button {
-        width: 100%;
-        padding: 10px;
-        border: none;
-        background: #007bff;
+    .banner-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        width: 90%;
         color: white;
-        font-weight: bold;
-        cursor: pointer;
-        border-radius: 4px;
-        margin-top: 15px;
     }
 
-        .billing-details .billing-button:hover {
-            background: #0056b3;
+    .mini-title {
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        font-size: 14px;
+        color: #ffdce6;
+    }
+
+    .banner-overlay h1 {
+        font-size: 72px;
+        margin: 25px 0;
+        font-weight: 700;
+        color: white;
+    }
+
+    .banner-overlay p {
+        font-size: 20px;
+        max-width: 800px;
+        margin: auto;
+        line-height: 1.8;
+        color: white;
+    }
+
+    .billing-details {
+        padding: 80px 0;
+        background: #f8f5f0;
+    }
+
+        .billing-details .container {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
-    .billing-details body {
-        padding-top: 100px;
-        padding-bottom: 50px;
-        margin: 0;
-        font-family: Arial, sans-serif;
-    }
-
-    .billing-details .payment-methods {
-        margin-top: 15px;
-        display: block !important; /* Đảm bảo không bị ẩn bởi CSS khác */
-        visibility: visible !important;
-    }
-
-    .billing-details .form-check {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 10px;
-    }
-
-        .billing-details .form-check input[type="radio"] {
-            margin: 0;
-            width: 16px;
-            height: 16px;
-            flex-shrink: 0;
+        .billing-details .checkout-wrapper {
+            position: relative;
         }
 
-        .billing-details .form-check label {
+        .billing-details .row {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .billing-details .col-md-6 {
+            width: 50%;
+        }
+
+        .billing-details .checkout-section,
+        .billing-details .sidebar-checkout {
+            background: #fff;
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+            .billing-details .checkout-section + .checkout-section {
+                margin-top: 30px;
+            }
+
+        .billing-details .section-heading,
+        .billing-details .summary-header {
+            margin-bottom: 28px;
+        }
+
+        .billing-details .section-subtitle {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #b48a5a;
+            margin-bottom: 10px;
+        }
+
+        .billing-details h2 {
             margin: 0;
-            padding: 0;
+            font-size: 30px;
+            font-weight: 700;
+            color: #1f1f1f;
+        }
+
+        .billing-details .billing-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .billing-details .form-group {
+            margin-bottom: 22px;
+        }
+
+        .billing-details label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .billing-details input,
+        .billing-details select {
+            width: 100%;
+            height: 54px;
+            border-radius: 14px;
+            border: 1px solid #e4ddd3;
+            background: #fff;
+            padding: 0 18px;
+            font-size: 15px;
+            color: #222;
+            transition: all .25s ease;
+            box-sizing: border-box;
+        }
+
+            .billing-details input:focus,
+            .billing-details select:focus {
+                outline: none;
+                border-color: #c8a27a;
+                box-shadow: 0 0 0 4px rgba(200,162,122,.15);
+            }
+
+            .billing-details input[readonly] {
+                background: #f5f5f5;
+                cursor: not-allowed;
+            }
+
+        .billing-details .text-danger {
+            display: block;
+            margin-top: 6px;
+            font-size: 13px;
+        }
+
+        .billing-details .billing-button {
+            width: 100%;
+            height: 56px;
+            border: none;
+            border-radius: 16px;
+            background: #1f1f1f;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: all .3s ease;
+            margin-top: 10px;
+        }
+
+            .billing-details .billing-button:hover {
+                background: #b48a5a;
+                transform: translateY(-2px);
+            }
+
+        .billing-details .address-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+            .billing-details .address-row select {
+                flex: 1;
+            }
+
+        .billing-details .address-btn {
+            min-width: 120px;
+            height: 54px;
+            border-radius: 14px;
+            border: none;
+            background: #b48a5a;
+            font-weight: 600;
+        }
+
+        .billing-details .payment-methods h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1f1f1f;
+        }
+
+        .billing-details .form-check {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 18px;
+            border: 1px solid #eee;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            transition: all .25s ease;
+            background: #fff;
+        }
+
+            .billing-details .form-check:hover {
+                border-color: #c8a27a;
+                background: #fcfaf7;
+            }
+
+            .billing-details .form-check input[type="radio"] {
+                width: 18px;
+                height: 18px;
+                margin: 0;
+                flex-shrink: 0;
+            }
+
+            .billing-details .form-check label {
+                margin: 0;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+        .billing-details .checkout-products {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .billing-details .checkout-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .billing-details .checkout-item-image img {
+            width: 85px;
+            height: 85px;
+            object-fit: cover;
+            border-radius: 18px;
+            border: 1px solid #eee;
+        }
+
+        .billing-details .checkout-item-content {
+            flex: 1;
+        }
+
+            .billing-details .checkout-item-content h5 {
+                margin: 0 0 10px;
+                font-size: 16px;
+                font-weight: 700;
+                color: #1f1f1f;
+                line-height: 1.5;
+            }
+
+        .billing-details .checkout-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .billing-details .checkout-item-total {
             font-size: 16px;
+            font-weight: 700;
+            color: #b48a5a;
         }
+
+        .billing-details .summary {
+            border-top: 1px solid #eee;
+            padding-top: 25px;
+        }
+
+        .billing-details .summary-line,
+        .billing-details .summary-total {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .billing-details .summary-line {
+            margin-bottom: 14px;
+            color: #666;
+            font-size: 15px;
+        }
+
+        .billing-details .summary-total {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px dashed #ddd;
+            font-size: 22px;
+            font-weight: 700;
+            color: #1f1f1f;
+        }
+
+        .billing-details .btn-back-cart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 54px;
+            margin-top: 30px;
+            border-radius: 16px;
+            border: 1px solid #ddd;
+            background: #fff;
+            color: #222;
+            text-decoration: none;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: all .3s ease;
+        }
+
+            .billing-details .btn-back-cart:hover {
+                background: #1f1f1f;
+                color: #fff;
+                border-color: #1f1f1f;
+            }
+
+    @@media (max-width: 991px) {
+        .billing-details {
+            padding: 50px 0;
+        }
+
+            .billing-details .row {
+                flex-direction: column;
+            }
+
+            .billing-details .col-md-6 {
+                width: 100%;
+            }
+
+            .billing-details .address-row {
+                flex-direction: column;
+            }
+
+            .billing-details .address-btn {
+                width: 100%;
+            }
+
+            .billing-details .checkout-section,
+            .billing-details .sidebar-checkout {
+                padding: 24px;
+            }
+
+            .billing-details h2 {
+                font-size: 24px;
+            }
+
+            .billing-details .summary-total {
+                font-size: 18px;
+            }
+    }
 </style>

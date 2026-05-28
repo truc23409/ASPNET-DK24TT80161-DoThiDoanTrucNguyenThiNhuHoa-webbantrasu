@@ -1,0 +1,86 @@
+﻿@model WebBanHang.Models.Category
+
+<h2>Chỉnh sửa danh mục</h2>
+<hr />
+
+<div class="container">
+    <div class="form-section">
+        <div class="register-container">
+            @if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
+            {
+                <div class="alert alert-danger mt-3">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            @using (Html.BeginForm("Edit", "DanhMucSP", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.CategoryId) <!-- Ẩn ID danh mục -->
+
+                <div class="input-group">
+                    <i class="fas fa-list"></i>
+                    @Html.TextBoxFor(model => model.CategoryName, new { @class = "form-control", id = "categoryName", placeholder = "Nhập tên danh mục", required = "required" })
+                </div>
+                <span id="categoryName-error" class="error-message"></span>
+
+                <button type="submit" class="btn btn-primary mt-3">Lưu thay đổi</button>
+                <a href="@Url.Action("Index", "DanhMucSP")" class="btn btn-secondary mt-3">Hủy</a>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const categoryNameInput = document.getElementById('categoryName');
+            const categoryNameError = document.getElementById('categoryName-error');
+            let isChecking = false; // Biến để tránh gọi AJAX nhiều lần
+            const currentId = @Model.CategoryId; // Lấy ID của danh mục đang chỉnh sửa
+
+            categoryNameInput.addEventListener('blur', function () {
+                const categoryNamePattern = /^[a-zA-Z0-9\sÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸưăạảấầẩẫậắằẳẵặẹẻẽềềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]+$/;
+                const categoryNameValue = categoryNameInput.value.trim();
+
+                // Kiểm tra các điều kiện cơ bản
+                if (categoryNameValue === "") {
+                    categoryNameError.textContent = "Tên danh mục không được để trống.";
+                    return;
+                } else if (!categoryNamePattern.test(categoryNameValue)) {
+                    categoryNameError.textContent = "Tên danh mục chỉ được chứa chữ cái, số và khoảng trắng, không được chứa ký tự đặc biệt.";
+                    return;
+                } else if (categoryNameValue.length > 255) {
+                    categoryNameError.textContent = "Tên danh mục không được vượt quá 255 ký tự.";
+                    return;
+                } else {
+                    categoryNameError.textContent = "";
+                }
+
+                // Kiểm tra trùng tên qua AJAX
+                if (!isChecking) {
+                    isChecking = true;
+                    $.ajax({
+                        url: '@Url.Action("CheckCategoryName", "DanhMucSP")',
+                        type: 'GET',
+                        data: { categoryName: categoryNameValue },
+                        success: function (result) {
+                            // Nếu tên đã tồn tại và không phải là tên của danh mục hiện tại
+                            if (!result && categoryNameValue.toLowerCase() !== '@Model.CategoryName'.toLowerCase()) {
+                                categoryNameError.textContent = "Tên danh mục đã tồn tại. Vui lòng chọn tên khác.";
+                            } else {
+                                categoryNameError.textContent = "";
+                            }
+                            isChecking = false;
+                        },
+                        error: function () {
+                            categoryNameError.textContent = "Đã có lỗi xảy ra khi kiểm tra tên danh mục.";
+                            isChecking = false;
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

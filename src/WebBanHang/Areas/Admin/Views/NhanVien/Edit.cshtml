@@ -1,0 +1,60 @@
+﻿@model WebBanHang.Models.Staff
+
+@{
+    ViewBag.Title = "Sửa nhân viên";
+}
+
+<h2>Thêm nhân viên</h2>
+
+<form method="post">
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.StaffId) <!-- Ẩn ID nhân viên -->
+    <div class="form-group">
+        <label>Họ và tên</label>
+        @Html.TextBoxFor(m => m.FullName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <label>Số điện thoại</label>
+        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <label>Ngày sinh</label>
+        @Html.TextBoxFor(m => m.DateOfBirth, new { @class = "form-control", type = "date" })
+        @Html.ValidationMessageFor(m => m.DateOfBirth, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <label>Email</label>
+        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <label>Giới tính</label>
+        @Html.DropDownListFor(m => m.Gender, new SelectList(new[] { "Nam", "Nữ" }), "Chọn giới tính", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Gender, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <label>Mã tài khoản</label>
+        @Html.TextBoxFor(m => m.AccountId, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.AccountId, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <label>Mã vai trò</label>
+        @Html.TextBoxFor(m => m.RoleId, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.RoleId, "", new { @class = "text-danger" })
+    </div>
+
+    <button type="submit" class="btn btn-primary">Thêm</button>
+    <a href="@Url.Action("NhanVien", "NhanVien")" class="btn btn-secondary">Hủy</a> <!-- Điều hướng về NhanVien -->
+</form>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

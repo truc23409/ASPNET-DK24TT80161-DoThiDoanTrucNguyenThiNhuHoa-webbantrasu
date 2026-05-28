@@ -1,0 +1,171 @@
+﻿@model List<WebBanHang.Models.Category>
+
+<h2 class="text-center">Chọn món</h2>
+<div class="form-group row">
+    <!-- Dropdown chọn loại sản phẩm -->
+    <div class="col-md-4">
+        <label>Loại sản phẩm</label>
+        <select id="categorySelect" class="form-control">
+            <option value="">-- Chọn loại sản phẩm --</option>
+            @foreach (var category in Model)
+            {
+                <option value="@category.CategoryId">@category.CategoryName</option>
+            }
+        </select>
+    </div>
+
+    <!-- Dropdown chọn sản phẩm -->
+    <div class="col-md-4">
+        <label>Sản phẩm</label>
+        <select id="productSelect" class="form-control">
+            <option value="">-- Chọn sản phẩm --</option>
+        </select>
+    </div>
+
+    <!-- Nhập số lượng -->
+    <div class="col-md-2">
+        <label>Số lượng</label>
+        <input type="number" id="quantity" class="form-control" value="1" min="1" />
+    </div>
+
+    <!-- Nút thêm món -->
+    <div class="col-md-2 d-flex align-items-end">
+        <button class="btn btn-danger w-100" id="btnAddToOrder">Thêm món</button>
+    </div>
+</div>
+
+<hr />
+
+@*<table id="hoaDonTable" class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Món ăn</th>
+            <th>Số lượng</th>
+            <th>Giá</th>
+            <th>Tổng</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<h4 class="text-right">Tổng tiền: <span id="tongTienHoaDon" data-total="0">0 đ</span></h4>*@
+
+<script>
+    $(document).ready(function () {
+        // Load sản phẩm theo loại
+        $('#categorySelect').change(function () {
+            const categoryId = $(this).val();
+            const productSelect = $("#productSelect");
+
+            // Reset dropdown sản phẩm trước khi thêm mới
+            productSelect.html('<option value="">-- Chọn sản phẩm --</option>');
+
+            if (categoryId) {
+                $.ajax({
+                    url: '@Url.Action("GetFoodByCategory", "DonHang", new { area = "Admin" })',
+                    type: 'GET',
+                    data: { categoryId: categoryId },
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log("Dữ liệu API:", data);
+
+                        if (Array.isArray(data) && data.length > 0) {
+                            data.forEach(item => {
+                                if (item.FoodId && item.FoodName && item.Price) {
+                                    productSelect.append(`<option value="${item.FoodId}" data-price="${item.Price}">${item.FoodName}</option>`);
+                                }
+                            });
+                        } else {
+                            productSelect.append('<option disabled>Không có sản phẩm nào</option>');
+                        }
+                    },
+                    error: function () {
+                        alert("Lỗi khi lấy danh sách sản phẩm!");
+                    }
+                });
+            }
+        });
+
+        // Thêm món vào hóa đơn
+        $("#btnAddToOrder").click(function () {
+            var selected = $("#productSelect option:selected");
+            var name = selected.text();
+            var price = parseFloat(selected.data("price")) || 0;
+            var quantity = parseInt($("#quantity").val());
+
+            if (!selected.val()) {
+                alert("Vui lòng chọn món!");
+                return;
+            }
+
+            if (quantity < 1 || isNaN(quantity)) {
+                alert("Số lượng không hợp lệ!");
+                return;
+            }
+
+            var total = price * quantity;
+
+            // Kiểm tra nếu chưa có tbody thì thêm vào
+            if ($("#hoaDonTable tbody").length === 0) {
+                $("#hoaDonTable").append("<tbody></tbody>");
+            }
+
+            var newRow = `
+                <tr>
+                    <td>${name}</td>
+                    <td>${quantity}</td>
+                    <td>${price.toLocaleString()} đ</td>
+                    <td>${total.toLocaleString()} đ</td>
+                </tr>
+            `;
+            $("#hoaDonTable tbody").append(newRow);
+
+            // Cập nhật tổng tiền
+            var currentTotal = parseFloat($("#tongTienHoaDon").data("total")) || 0;
+            currentTotal += total;
+            $("#tongTienHoaDon").data("total", currentTotal);
+            $("#tongTienHoaDon").text(currentTotal.toLocaleString() + " đ");
+        });
+    });
+</script>
+
+<style>
+    .category-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+        .category-list li {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease;
+        }
+
+            .category-list li:hover {
+                background-color: #e9ecef;
+            }
+
+            .category-list li a {
+                text-decoration: none;
+                color: #007bff;
+                font-weight: bold;
+                display: block;
+            }
+
+                .category-list li a:hover {
+                    text-decoration: underline;
+                }
+
+    .product-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+    }
+</style>

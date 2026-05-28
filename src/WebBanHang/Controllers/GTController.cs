@@ -13,28 +13,42 @@ namespace WebBanHang.Controllers
         private WebAppDBEntities db = new WebAppDBEntities();
         public ActionResult Index()
         {
-            var bestSellers = db.InvoiceDetails
-                .Where(id => id.FoodId != null)
-                .GroupBy(id => id.FoodId)
+            var invoiceData = db.InvoiceDetails
+                .Where(x => x.FoodId != null)
+                .Select(x => new
+                {
+                    FoodId = x.FoodId.Value,
+                    Quantity = x.SoLuong
+                });
+
+            var orderData = db.OrderDetails
+                .Select(x => new
+                {
+                    FoodId = x.FoodId,
+                    Quantity = x.Quantity
+                });
+
+            var bestSellers = invoiceData
+                .Union(orderData)
+                .GroupBy(x => x.FoodId)
                 .Select(g => new
                 {
-                    FoodId = g.Key.Value,
-                    TotalSold = g.Sum(id => id.SoLuong)
+                    FoodId = g.Key,
+                    TotalSold = g.Sum(x => x.Quantity)
                 })
-                .OrderByDescending(g => g.TotalSold)
+                .OrderByDescending(x => x.TotalSold)
                 .Take(8)
-                .ToList()
                 .Join(db.Foods,
-                      bs => bs.FoodId,
-                      food => food.FoodId,
-                      (bs, food) => new BanChayModel
-                      {
-                          FoodId = bs.FoodId,
-                          FoodName = food != null ? food.FoodName : "Không có tên",
-                          ImageUrl = food != null ? food.ImageURL : Url.Content("~/Images/no-image.png"),
-                          Price = food != null ? food.Price : 0,
-                          TotalSold = bs.TotalSold
-                      })
+                    bs => bs.FoodId,
+                    food => food.FoodId,
+                    (bs, food) => new BanChayModel
+                    {
+                        FoodId = food.FoodId,
+                        FoodName = food.FoodName,
+                        ImageUrl = food.ImageURL,
+                        Price = food.Price,
+                        TotalSold = bs.TotalSold
+                    })
                 .ToList();
 
             ViewBag.BanChay = bestSellers;

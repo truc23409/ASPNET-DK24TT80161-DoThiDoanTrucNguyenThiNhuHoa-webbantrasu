@@ -1,0 +1,55 @@
+﻿@model WebBanHang.Models.Food
+
+@{
+    ViewBag.Title = "Xác nhận xóa món ăn";
+}
+
+<h2>Xác nhận xóa món ăn</h2>
+
+<div>
+    <h3>@Model.FoodName</h3>
+    <p><strong>Loại:</strong> @(Model.Category != null ? Model.Category.CategoryName : "Không xác định")</p>
+
+    <p>
+        <strong>Nguyên liệu:</strong>
+        @if (Model.FoodIngredients != null && Model.FoodIngredients.Any())
+        {
+            foreach (var item in Model.FoodIngredients)
+            {
+                @item.Ingredient.IngredientName <text>, </text>
+            }
+        }
+        else
+        {
+            <span>Chưa có nguyên liệu</span>
+        }
+    </p>
+    @{
+        decimal price = Model.Price;
+        decimal discount = Model.Discount ?? 0; // nếu Discount là nullable
+        decimal discountPrice = price * (1 - (discount / 100m)); // sử dụng 100m để ép về decimal
+    }
+    @{
+        var culture = new System.Globalization.CultureInfo("vi-VN");
+    }
+    <p><strong>Giá:</strong> @Model.Price.ToString("C0", culture)</p>
+    <p><strong>Giảm giá:</strong> @discount% → <strong>@discountPrice.ToString("C0", culture)</strong></p>
+
+
+
+    <p><strong>Số lượng tồn:</strong> @Model.Stock</p>
+    <p><strong>Mô tả:</strong> @Model.Description</p>
+    <p><strong>Ngày tạo:</strong> @(Model.CreatedDate.HasValue ? Model.CreatedDate.Value.ToString("yyyy-MM-dd HH:mm") : "Chưa có dữ liệu")</p>
+    <p><strong>Ngày cập nhật:</strong> @(Model.UpdatedDate.HasValue ? Model.UpdatedDate.Value.ToString("yyyy-MM-dd HH:mm") : "Chưa có dữ liệu")</p>
+    <p><strong>Trạng thái:</strong> @(Model.Status == true ? "Còn bán" : "Ngừng bán")</p>
+
+    <p><strong>Hình ảnh:</strong></p>
+    <img src="@Model.ImageURL" alt="@Model.FoodName" style="max-width: 200px; border: 1px solid #ddd; padding: 5px;" />
+</div>
+
+@using (Html.BeginForm("Delete", "SanPhamAdmin", new { id = Model.FoodId }, FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <input type="submit" value="Xác nhận xóa" class="btn btn-danger" />
+    <a href="@Url.Action("Info", "SanPhamAdmin")" class="btn btn-secondary">Hủy</a>
+}

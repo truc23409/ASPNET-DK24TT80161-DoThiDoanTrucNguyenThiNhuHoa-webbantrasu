@@ -1,0 +1,82 @@
+﻿@model WebBanHang.Models.PhuongThucThanhToan
+
+<h2>Thêm phương thức thanh toán mới</h2>
+<hr />
+
+<div class="container">
+    <div class="form-section">
+        <div class="register-container">
+            @if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
+            {
+                <div class="alert alert-danger mt-3">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            @using (Html.BeginForm("Add", "PhuongThucThanhToan", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="input-group">
+                    <i class="fas fa-credit-card"></i>
+                    @Html.TextBoxFor(model => model.TenPhuongThuc, new { @class = "form-control", id = "tenPhuongThuc", placeholder = "Nhập tên phương thức thanh toán", required = "required" })
+                </div>
+                <span id="tenPhuongThuc-error" class="error-message"></span>
+
+                <button type="submit" class="btn btn-success mt-3">Thêm phương thức</button>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tenPhuongThucInput = document.getElementById('tenPhuongThuc');
+            const tenPhuongThucError = document.getElementById('tenPhuongThuc-error');
+            let isChecking = false; // Biến để tránh gọi AJAX nhiều lần
+
+            tenPhuongThucInput.addEventListener('blur', function () {
+                const tenPhuongThucPattern = /^[a-zA-Z0-9\sÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸưăạảấầẩẫậắằẳẵặẹẻẽềềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]+$/;
+                const tenPhuongThucValue = tenPhuongThucInput.value.trim();
+
+                // Kiểm tra các điều kiện cơ bản
+                if (tenPhuongThucValue === "") {
+                    tenPhuongThucError.textContent = "Tên phương thức thanh toán không được để trống.";
+                    return;
+                } else if (!tenPhuongThucPattern.test(tenPhuongThucValue)) {
+                    tenPhuongThucError.textContent = "Tên phương thức thanh toán chỉ được chứa chữ cái, số và khoảng trắng, không được chứa ký tự đặc biệt.";
+                    return;
+                } else if (tenPhuongThucValue.length > 255) {
+                    tenPhuongThucError.textContent = "Tên phương thức thanh toán không được vượt quá 255 ký tự.";
+                    return;
+                } else {
+                    tenPhuongThucError.textContent = "";
+                }
+
+                // Kiểm tra trùng tên qua AJAX
+                if (!isChecking) {
+                    isChecking = true;
+                    $.ajax({
+                        url: '@Url.Action("CheckTenPhuongThuc", "PhuongThucThanhToan")',
+                        type: 'GET',
+                        data: { tenPhuongThuc: tenPhuongThucValue },
+                        success: function (result) {
+                            if (!result) {
+                                tenPhuongThucError.textContent = "Tên phương thức thanh toán đã tồn tại. Vui lòng chọn tên khác.";
+                            } else {
+                                tenPhuongThucError.textContent = "";
+                            }
+                            isChecking = false;
+                        },
+                        error: function () {
+                            tenPhuongThucError.textContent = "Đã có lỗi xảy ra khi kiểm tra tên phương thức.";
+                            isChecking = false;
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

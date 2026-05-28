@@ -1,0 +1,436 @@
+﻿@model IEnumerable<WebBanHang.Models.Food>
+@{
+    Layout = "../Shared/_Layout.cshtml";
+}
+
+<!-- Thêm Chart.js và Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+
+<!-- Dashboard Statistics -->
+<section class="dashboard-stats container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <a href="@Url.Action("Info", "SanPhamAdmin")" class="text-decoration-none">
+                <div class="card text-center p-3 bg-light">
+                    <h5><i class="fas fa-box"></i> Sản phẩm</h5>
+                    <p class="display-6">@ViewBag.TotalProducts</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="@Url.Action("KhoAdmin", "KhoAdmin")" class="text-decoration-none">
+                <div class="card text-center p-3 bg-light">
+                    <h5><i class="fas fa-warehouse"></i> Nguyên liệu</h5>
+                    <p class="display-6">@ViewBag.TotalIngredients</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="@Url.Action("Index", "DonHangOnline", new { area = "Admin" })" class="text-decoration-none">
+                <div class="card text-center p-3 bg-light">
+                    <h5><i class="fas fa-shopping-cart"></i> Đơn hàng</h5>
+                    <p class="display-6">@ViewBag.TotalOrders</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center p-3 bg-light">
+                <h5><i class="fas fa-money-bill"></i> Tổng doanh thu</h5>
+                <p class="display-6">@ViewBag.TotalSales.ToString("N0") VND</p>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card text-center p-3 bg-light">
+                <h5><i class="fas fa-hourglass-half"></i> Đặt hàng thành công</h5>
+                <p class="display-6">@ViewBag.PlacedOrders</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center p-3 bg-light">
+                <h5><i class="fas fa-box-open"></i> Đang chuẩn bị</h5>
+                <p class="display-6">@ViewBag.PreparingOrders</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center p-3 bg-light">
+                <h5><i class="fas fa-truck"></i> Đang giao hàng</h5>
+                <p class="display-6">@ViewBag.ShippingOrders</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center p-3 bg-light">
+                <h5><i class="fas fa-check-circle"></i> Giao hàng thành công</h5>
+                <p class="display-6">@ViewBag.CompletedOrders</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Budget vs Sales Chart -->
+<section class="budget-vs-sales container mt-4">
+    <h3 class="text-center">Ngân sách vs Doanh thu</h3>
+    <canvas id="budgetVsSalesChart" height="100"></canvas>
+</section>
+
+<!-- Top Products and Top Countries -->
+<section class="top-products-countries container mt-4">
+    <div class="row">
+        <!-- Top Products -->
+        <div class="col-md-6">
+            <h3 class="text-center">🔥 SẢN PHẨM BÁN CHẠY 🔥</h3>
+            <div class="row">
+                @if (ViewBag.BanChay is List<WebBanHang.Models.BanChayModel> bestSellers && bestSellers.Any())
+                {
+                    foreach (var item in bestSellers)
+                    {
+                        <div class="col-md-4 mb-3">
+                            <div class="card text-center p-3 bg-light">
+                                <img src="@(!string.IsNullOrEmpty(item.ImageUrl) ? item.ImageUrl : Url.Content("~/Images/no-image.png"))"
+                                     style="max-width: 100%; height: auto; display: block;" />
+                                <h5>@item.FoodName</h5>
+                                <p class="price" style="color: #C19A6B; font-weight: bold;">@item.Price.ToString("N0")đ</p>
+                                <p class="sold">Đã bán: @item.TotalSold</p>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-center text-danger">Không có dữ liệu</p>
+                }
+            </div>
+        </div>
+        <!-- Top Countries -->
+        <div class="col-md-6">
+            <h3 class="text-center">Top Quốc gia</h3>
+            <ul class="list-group">
+                @if (ViewBag.TopCountries is List<WebBanHang.Models.TopCountryModel> topCountriesList && topCountriesList.Any())
+                {
+                    foreach (var country in topCountriesList)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @country.Country
+                            <span class="badge bg-primary rounded-pill">@country.OrderCount</span>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item text-center">Không có dữ liệu</li>
+                }
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Orders -->
+<section class="recent-orders container mt-4">
+    <h3 class="text-center">Đơn hàng gần đây</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Người dùng</th>
+                <th>Trạng thái</th>
+                <th>Ngày đặt</th>
+                <th>Tổng tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ViewBag.RecentOrders is List<WebBanHang.Models.RecentOrderModel> recentOrdersList && recentOrdersList.Any())
+            {
+                foreach (var order in recentOrdersList)
+                {
+                    <tr>
+                        <td>@order.OrderId</td>
+                        <td>@order.FullName</td>
+                        <td>@order.Status</td>
+                        <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@order.TotalAmount.ToString("N0")đ</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" class="text-center">Không có dữ liệu</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+
+<!-- NGUYÊN LIỆU SẮP HẾT -->
+<section class="low-stock container mt-4">
+    <h3 class="text-center">⚠️ NGUYÊN LIỆU SẮP HẾT ⚠️</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Hình ảnh</th>
+                <th>Tên</th>
+                <th>Số lượng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ViewBag.LowStockIngredients is List<WebBanHang.Models.Ingredient> lowStockList && lowStockList.Any())
+            {
+                foreach (var item in lowStockList)
+                {
+                    <tr>
+                        <td><img src="@item.ImageURL" alt="@item.IngredientName" style="width:50px; height:50px; object-fit:cover;"></td>
+                        <td>@item.IngredientName</td>
+                        <td>@item.SoLuong</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3" class="text-center">Không có dữ liệu</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+
+<script>
+// Sử dụng kiểu dữ liệu mạnh với Monthly
+const monthlySalesData = @Html.Raw(Json.Encode(((List<WebBanHang.Models.Monthly>)ViewBag.MonthlySales).Select(m => m.TotalRevenue)));
+const monthlyBudgetData = @Html.Raw(Json.Encode(((List<WebBanHang.Models.MonthlyBudget>)ViewBag.MonthlyBudget).Select(m => m.Budget)));
+const monthlyLabels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+
+const budgetVsSalesChart = new Chart(document.getElementById('budgetVsSalesChart'), {
+    type: 'line',
+    data: {
+        labels: monthlyLabels,
+        datasets: [
+            {
+                label: 'Doanh thu',
+                data: monthlySalesData,
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                fill: true
+            },
+            {
+                label: 'Ngân sách',
+                data: monthlyBudgetData,
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                fill: true
+            }
+        ]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Số tiền (VND)'
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Tháng'
+                }
+            }
+        }
+    }
+});
+</script>
+<style>
+    /* Dashboard Statistics */
+    body {
+        background-color: #f8f9fa !important; /* Đổi màu nền theo giao diện */
+    }
+
+    div {
+        background-color: #f8f9fa !important;
+    }
+
+    .dashboard-stats {
+        max-width: 1200px; /* Giới hạn độ rộng của dashboard */
+        margin: auto;
+        padding: 20px 0;
+    }
+
+        .dashboard-stats .card {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+            .dashboard-stats .card:hover {
+                transform: scale(1.05);
+                box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.15);
+            }
+
+        .dashboard-stats h5 {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-stats p {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            margin: 5px 0;
+        }
+
+        .dashboard-stats .card i {
+            font-size: 30px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+    #carouselBestSellers {
+        max-width: 1000px; /* Giới hạn kích thước carousel */
+        margin: auto;
+        padding-bottom: 30px;
+    }
+
+    .best-sellers {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 10px 0; /* Tăng khoảng cách trên/dưới */
+    }
+
+    /* Nguyên liệu sắp hết */
+    .low-stock {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 10px 0; /* Tăng khoảng cách */
+        background: #f8f9fa; /* Tạo nền nhạt giúp phân tách */
+        border-radius: 10px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+        /* Bảng nguyên liệu */
+        .low-stock table {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+    /* Banner */
+    .banner {
+        width: 100%;
+        height: 600px;
+        margin: 0 auto;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .banner-video,
+    .banner-image {
+        width: 90%;
+        height: 500px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .banner:hover .banner-video,
+    .banner:hover .banner-image {
+        /*    transform: scale(1.05);*/
+    }
+
+    /* Căn giữa danh sách sản phẩm */
+    .product-list {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .carousel-inner {
+        padding-bottom: 20px; /* Giảm khoảng cách dư thừa */
+        min-height: 400px;
+    }
+
+    .col-md-3 {
+        padding-bottom: 20px; /* Tạo khoảng trống dưới */
+    }
+
+    .carousel {
+        overflow: visible !important;
+    }
+
+    /* Card sản phẩm */
+    .product-card {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        padding: 15px;
+        width: 260px;
+        height: 100%;
+        border-radius: 10px;
+        transition: all 0.3s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; /* Căn trái toàn bộ nội dung */
+        text-align: left; /* Chữ căn trái */
+        align-items: flex-start; /* Căn trái toàn bộ nội dung */
+        text-align: left; /* Chữ căn trái */
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+
+        .product-card:hover {
+            transform: scale(1.05);
+            box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .product-card h5 {
+            font-size: 16px;
+            color: #333;
+            margin: 10px 0 5px;
+        }
+
+        .product-card .price {
+            color: #C19A6B !important; /* Màu trùng với nền nút "Xem chi tiết" */
+            font-weight: bold;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        .product-card .sold {
+            color: #666;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .product-card .btn-buy {
+            background: #e5d1c0;
+            color: #3a3a3a;
+            border: none;
+            padding: 8px 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            border-radius: 5px;
+            font-size: 13px;
+            text-transform: uppercase;
+            margin-top: auto;
+        }
+
+            .product-card .btn-buy:hover {
+                background: #d3b49e;
+            }
+
+    .price {
+        color: #C19A6B; /* Thay bằng mã màu của nền nút "Xem chi tiết" */
+        font-weight: bold;
+    }
+</style>

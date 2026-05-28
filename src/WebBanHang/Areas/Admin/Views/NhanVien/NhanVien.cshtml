@@ -1,0 +1,254 @@
+﻿@model List<WebBanHang.Models.Staff>
+
+@{
+    Layout = "../Shared/_Layout.cshtml";
+    ViewBag.Title = "Danh sách nhân viên";
+}
+<div class="page-container">
+    <div class="category-header">
+        <h2 class="category-title">Danh sách nhân viên</h2>
+    </div>
+
+    <div class="top-actions">
+        <a href="@Url.Action("Add", "NhanVien")" class="btn-add">
+            <i class="fas fa-plus"></i>
+        </a>
+        <div class="search-container">
+            <input type="text" id="searchBox" placeholder="Search" onkeyup="searchStaff()">
+            <button class="search-btn">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-striped category-table" id="staffTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Họ và tên</th>
+                <th>Số điện thoại</th>
+                <th>Ngày sinh</th>
+                <th>Email</th>
+                <th>Giới tính</th>
+                <th>Mã tài khoản</th>
+                <th>Mã vai trò</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.StaffId</td>
+                    <td>@item.FullName</td>
+                    <td>@item.Phone</td>
+                    <td>@(item.DateOfBirth?.ToString("dd/MM/yyyy") ?? "N/A")</td>
+                    <td>@item.Email</td>
+                    <td>@(item.Gender == "True" ? "Nam" : "Nữ")</td>
+                    <td>@item.AccountId</td>
+                    <td>@item.RoleId</td>
+                    <td class="action-buttons">
+                        <a href="@Url.Action("Edit", "NhanVien", new { id = item.StaffId })" class="btn-action btn-edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="@Url.Action("Delete", "NhanVien", new { id = item.StaffId })" class="btn-action btn-delete">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    function searchStaff() {
+        var input, filter, table, tr, tdArray, i, txtValue, foundCount = 0;
+        input = document.getElementById("searchBox");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("staffTable");
+        tr = table.getElementsByTagName("tr");
+
+        for (i = 1; i < tr.length; i++) {
+            tdArray = tr[i].getElementsByTagName("td");
+            let found = false;
+            for (let td of tdArray) {
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            tr[i].style.display = found ? "" : "none";
+            if (found) foundCount++;
+        }
+
+        let alertBox = document.getElementById("noResultAlert");
+        if (!foundCount) {
+            if (!alertBox) {
+                let newAlert = document.createElement("p");
+                newAlert.id = "noResultAlert";
+                newAlert.className = "alert alert-warning";
+                newAlert.innerText = "Không tìm thấy kết quả.";
+                table.parentNode.insertBefore(newAlert, table);
+            }
+        } else {
+            if (alertBox) alertBox.remove();
+        }
+    }
+</script>
+
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2; /* Màu xám nhạt cho hàng chẵn */
+    }
+
+    tr:nth-child(odd) {
+        background-color: white; /* Màu trắng cho hàng lẻ */
+    }
+
+    .category-header {
+        background-color: #ffff;
+        padding: 20px 30px;
+        border-radius: 0 25px 25px 0;
+        margin-bottom: 20px;
+    }
+
+    .category-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .top-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .search-container {
+        position: relative;
+        width: 250px;
+    }
+
+        .search-container input {
+            width: 100%;
+            padding: 8px 35px 8px 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+    .search-btn {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        color: #007bff;
+        font-size: 16px;
+    }
+
+    .btn-add {
+        padding: 10px 15px;
+        background-color: #83aafd;
+        color: white;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+        .btn-add:hover {
+            background-color: #0056b3;
+        }
+
+    .category-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        background: white;
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+        .category-table th, .category-table td {
+            padding: 4px 8px; /* Giảm padding */
+            border: 1px solid #ddd;
+            text-align: center;
+            white-space: nowrap; /* Ngăn chữ xuống dòng */
+        }
+
+
+        .category-table td {
+            margin: 0;
+        }
+
+        .category-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .btn-edit, .btn-delete {
+        padding: 6px 12px;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+    }
+
+    .btn-edit {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background-color: #218838;
+    }
+
+    .btn-delete:hover {
+        background-color: #c82333;
+    }
+
+    .alert {
+        padding: 12px;
+        text-align: center;
+        border-radius: 5px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+</style>

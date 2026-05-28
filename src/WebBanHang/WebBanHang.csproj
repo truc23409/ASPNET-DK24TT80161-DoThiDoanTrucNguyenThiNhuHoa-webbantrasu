@@ -167,6 +167,20 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\BaoCaoController.cs" />
+    <Compile Include="Areas\Admin\Controllers\DanhMucSPController.cs" />
+    <Compile Include="Areas\Admin\Controllers\DonHangOfflineController.cs" />
+    <Compile Include="Areas\Admin\Controllers\DonHangOnlineController.cs" />
+    <Compile Include="Areas\Admin\Controllers\HoaDonController.cs" />
+    <Compile Include="Areas\Admin\Controllers\HomeAdminController.cs" />
+    <Compile Include="Areas\Admin\Controllers\KhoAdminController.cs" />
+    <Compile Include="Areas\Admin\Controllers\KhoXuatFileController.cs" />
+    <Compile Include="Areas\Admin\Controllers\NguoiDungController.cs" />
+    <Compile Include="Areas\Admin\Controllers\NhanVienController.cs" />
+    <Compile Include="Areas\Admin\Controllers\PhuongThucThanhToanController.cs" />
+    <Compile Include="Areas\Admin\Controllers\SanPhamAdminController.cs" />
+    <Compile Include="Areas\Admin\Controllers\AdminThanhToanController.cs" />
     <Compile Include="Controllers\ForgotController.cs" />
     <Compile Include="Controllers\GioHangController.cs" />
     <Compile Include="Controllers\GTController.cs" />
@@ -449,6 +463,49 @@
     <Content Include="Scripts\bootstrap.esm.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Areas\Admin\Views\web.config" />
+    <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Admin\Views\HomeAdmin\HomeAdmin.cshtml" />
+    <Content Include="Areas\Admin\Views\SanPhamAdmin\Add.cshtml" />
+    <Content Include="Areas\Admin\Views\SanPhamAdmin\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\SanPhamAdmin\Info.cshtml" />
+    <Content Include="Areas\Admin\Views\SanPhamAdmin\Delete.cshtml" />
+    <Content Include="Areas\Admin\Views\Thanhtoan\ThanhToan.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMucSP\DanhMucSP.cshtml" />
+    <Content Include="Areas\Admin\Views\KhoAdmin\KhoAdmin.cshtml" />
+    <Content Include="Areas\Admin\Views\DonHangOffline\_DanhSachBanPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\HoaDon\_HoaDonTable.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMucSP\Add.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMucSP\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMucSP\Delete.cshtml" />
+    <Content Include="Areas\Admin\Views\KhoAdmin\Add.cshtml" />
+    <Content Include="Areas\Admin\Views\KhoAdmin\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\KhoAdmin\Delete.cshtml" />
+    <Content Include="Areas\Admin\Views\KhoXuatFile\ExportToExcel.cshtml" />
+    <Content Include="Areas\Admin\Views\KhoXuatFile\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\HoaDon\HoaDon.cshtml" />
+    <Content Include="Areas\Admin\Views\BaoCao\DoanhThu.cshtml" />
+    <Content Include="Areas\Admin\Views\BaoCao\BanChay.cshtml" />
+    <Content Include="Areas\Admin\Views\HoaDon\_ChiTietHoaDon.cshtml" />
+    <Content Include="Areas\Admin\Views\BaoCao\ExportToExcel.cshtml" />
+    <Content Include="Areas\Admin\Views\NhanVien\NhanVien.cshtml" />
+    <Content Include="Areas\Admin\Views\NhanVien\Add.cshtml" />
+    <Content Include="Areas\Admin\Views\NhanVien\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\NhanVien\Delete.cshtml" />
+    <Content Include="Areas\Admin\Views\DonHangOffline\_DanhSachLoaiSanPhamPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\DonHangOffline\_DanhSachSanPhamPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\DonHangOffline\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\DonHangOffline\_InvoicePartial.cshtml" />
+    <Content Include="Areas\Admin\Views\NguoiDung\NguoiDung.cshtml" />
+    <Content Include="Areas\Admin\Views\NguoiDung\Add.cshtml" />
+    <Content Include="Areas\Admin\Views\NguoiDung\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\NguoiDung\Delete.cshtml" />
+    <Content Include="Areas\Admin\Views\PhuongThucThanhToan\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\PhuongThucThanhToan\Add.cshtml" />
+    <Content Include="Areas\Admin\Views\PhuongThucThanhToan\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\PhuongThucThanhToan\Delete.cshtml" />
+    <Content Include="Areas\Admin\Views\DonHangOnline\Index.cshtml" />
     <EntityDeploy Include="Models\Model1.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>Model1.Designer.cs</LastGenOutput>
@@ -456,6 +513,7 @@
     <Content Include="Models\Model1.edmx.diagram">
       <DependentUpon>Model1.edmx</DependentUpon>
     </Content>
+    <Content Include="Areas\Admin\Views\HoaDon\_HoaDonRows.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -509,6 +567,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Views\FoodEditViewModel\" />
     <Folder Include="Views\MonthlyBudget\" />
     <Folder Include="Views\MonthlyRevenue\" />

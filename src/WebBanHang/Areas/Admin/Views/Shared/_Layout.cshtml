@@ -1,0 +1,478 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rosabelle Tea - Admin</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/SanPhamAdmin.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/HomeAdmin.css")" rel="stylesheet" />
+    <style>
+                body {
+                    margin: 0;
+                    padding: 0;
+                    font-family: 'Playfair Display', serif;
+                    background-color: #f8f9fa;
+                }
+
+                      .sidebar {
+                        width: 250px;
+                        height: 100vh;
+                        position: fixed;
+                        left: 0;
+                        top: 0;
+                        background-color: #ffffff;
+                        color: #333;
+                        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+                        z-index: 999;
+                        transition: all 0.3s ease-in-out;
+                    }
+
+                    /* LOGO */
+                    .sidebar .logo {
+                        font-family: 'Great Vibes', cursive;
+                        font-size: 28px;
+                        padding: 20px;
+                        text-align: center;
+                        border-bottom: 1px solid #e0e0e0;
+                        color: #333;
+                        background: #f8f9fa;
+                    }
+
+                    /* DANH SÁCH MENU */
+                    .sidebar ul {
+                        list-style: none;
+                        padding: 0;
+                        margin: 0;
+                    }
+
+                    .sidebar ul li {
+                        padding: 12px 20px;
+                        cursor: pointer;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        color: #333;
+                        transition: background 0.3s ease-in-out;
+                        font-size: 16px;
+                        font-weight: 500;
+                    }
+
+                    .sidebar ul li:hover {
+                        background-color: #f0f0f0;
+                        color: #28a745;
+                    }
+
+                    /* ICON MŨI TÊN XOAY KHI MỞ MENU CON */
+                    .sidebar ul li i {
+                        transition: transform 0.3s ease-in-out;
+                    }
+
+                    .sidebar ul li.active > i {
+                        transform: rotate(90deg);
+                    }
+
+                    /* SUBMENU */
+                    .submenu {
+                        display: none;
+                        padding-left: 10px;
+                        margin-top: 5px;
+                        border-left: 3px solid #28a745;
+                        padding-left: 15px;
+                    }
+
+                    .submenu.show {
+                        display: block;
+                        animation: fadeIn 0.3s ease-in-out;
+                    }
+
+                    .submenu p a {
+                        display: block;
+                        color: #666;
+                        text-decoration: none;
+                        padding: 10px 0;
+                        padding-left: 10px;
+                        transition: all 0.3s ease;
+                        border-radius: 6px;
+                        font-size: 15px;
+                    }
+
+                    .submenu p a:hover {
+                        color: #28a745 !important;
+                        background-color: rgba(40, 167, 69, 0.1);
+                        padding-left: 15px;
+                    }
+
+        /* SUBMENU */
+        .submenu {
+            display: none;
+            padding-left: 10px;
+            margin-top: 5px;
+            border-left: 3px solid #28a745;
+            padding-left: 15px;
+            opacity: 0;
+            transform: translateY(-5px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        /* Khi submenu mở */
+        .submenu.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .sidebar ul li.active {
+            background-color: #c8c8c8 !important; /* Màu xanh lá cây */
+            color: white !important;
+            border-radius: 5px;
+        }
+
+            .sidebar ul li.active a {
+                color: white !important;
+            }
+
+
+                .main-wrapper {
+                    margin-left: 250px;
+                    min-height: 100vh;
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                .content {
+                    flex: 1;
+                    padding: 20px;
+                }
+
+                footer {
+                    padding: 15px 20px;
+                    background-color: #ffffff;
+                    border-top: 1px solid #e0e0e0;
+                    text-align: center;
+                    color: #333;
+                    font-size: 14px;
+                }
+
+
+                .navbar {
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                    z-index: 1000;
+                    position: sticky;
+                    top: 0;
+                    background-color: #6874ec !important;
+                    color: white;
+                    height: 84px !important; /* Ép chiều cao luôn cố định */
+                    min-height: 84px !important;
+                    display: flex;
+                    align-items: center;
+                    flex-shrink: 0; /* Ngăn thu nhỏ */
+                }
+
+                    .navbar .dropdown-menu {
+                        position: absolute !important;
+                        top: 100% !important;
+                        visibility: visible !important;
+                        opacity: 1 !important;
+                    }
+
+                .input-group .form-control {
+                    border-radius: 25px 0 0 25px;
+                    padding-left: 15px;
+                }
+
+                .input-group .btn-light {
+                    border-radius: 0 25px 25px 0;
+                }
+
+                .navbar .nav-link {
+                    font-size: 18px;
+                    color: #fff !important;
+                }
+
+                .navbar .dropdown-menu {
+                    min-width: 180px;
+                }
+
+                .navbar .form-inline {
+                    margin-left: 20px;
+                }
+
+                .sidebar, .sidebar a, .content, .content table, .content h1, .content h2, .content p, .content td, .content th, .content button {
+                    color: #000 !important;
+                }
+
+                .input-group select.form-select {
+                    border-radius: 25px 0 0 25px;
+                }
+
+                .input-group input.form-control {
+                    border-radius: 0;
+                }
+
+                .input-group .btn-light {
+                    border-radius: 0 25px 25px 0;
+                }
+                .scroll-buttons {
+                    position: fixed;
+                    right: 20px;
+                    bottom: 50px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    z-index: 999;
+                }
+
+                    .scroll-buttons button {
+                        width: 50px;
+                        height: 50px;
+                        background-color: #ff8a9f; /* thay cho #eceaea */
+                        border: none;
+                        border-radius: 50%;
+                        color: #b84c66; /* thay cho white - dùng hồng đậm trầm cho chữ */
+                        font-size: 20px;
+                        cursor: pointer;
+                        transition: background 0.3s ease-in-out;
+                    }
+
+                        /* Thêm hiệu ứng hover cho nữ tính hơn */
+                        .scroll-buttons button:hover {
+                            background-color: #ff6f8f; /* hồng đậm hơn khi hover */
+                            color: white;
+                            box-shadow: 0 5px 15px rgba(255, 111, 143, 0.4);
+                        }
+
+    </style>
+
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <a href="@Url.Action("HomeAdmin", "HomeAdmin")" class="text-decoration-none text-dark d-block">
+                Rosabelle Tea
+            </a>
+        </div>
+        <ul>
+            <!-- Sản phẩm -->
+            <li onclick="toggleMenu('product', event)" class="@(Request.Url.AbsolutePath.Contains("SanPhamAdmin") || Request.Url.AbsolutePath.Contains("DanhMucSP") ? "active" : "")">
+                <span>Sản phẩm</span>
+                <i class="fas fa-chevron-right"></i>
+            </li>
+            <div id="submenu-product" class="submenu">
+                <p><a href="@Url.Action("DanhMucSP", "DanhMucSP", new { area = "Admin" })">Danh mục sản phẩm</a></p>
+                <p><a href="@Url.Action("Info", "SanPhamAdmin", new { area = "Admin" })">Sản phẩm</a></p>
+            </div>
+
+            <!-- Kho nguyên liệu -->
+            <li onclick="toggleMenu('kho', event)" class="@(Request.Url.AbsolutePath.Contains("KhoAdmin") || Request.Url.AbsolutePath.Contains("KhoXuatFile") ? "active" : "")">
+                <span>Kho nguyên liệu</span>
+                <i class="fas fa-chevron-right"></i>
+            </li>
+            <div id="submenu-kho" class="submenu">
+                <p><a href="@Url.Action("KhoAdmin", "KhoAdmin", new { area = "Admin" })">Nguyên liệu</a></p>
+                <p><a href="@Url.Action("Index", "KhoXuatFile", new { area = "Admin" })">Xuất file</a></p>
+            </div>
+
+            <!-- Báo cáo -->
+            <li onclick="toggleMenu('baocao', event)" class="@(Request.Url.AbsolutePath.Contains("BaoCao") ? "active" : "")">
+                <span>Báo cáo</span>
+                <i class="fas fa-chevron-right"></i>
+            </li>
+            <div id="submenu-baocao" class="submenu">
+                <p><a href="@Url.Action("DoanhThu", "BaoCao", new { area = "Admin" })">Doanh thu theo thời gian</a></p>
+                <p><a href="@Url.Action("BanChay", "BaoCao", new { area = "Admin" })">Sản phẩm bán chạy</a></p>
+            </div>
+
+            <!-- Quản lý shop -->
+            <li onclick="toggleMenu('manageshop', event)" class="@(Request.Url.AbsolutePath.Contains("NguoiDung") || Request.Url.AbsolutePath.Contains("NhanVien") ? "active" : "")">
+                <span>Manage Shop</span>
+                <i class="fas fa-chevron-right"></i>
+            </li>
+            <div id="submenu-manageshop" class="submenu">
+                <p><a href="@Url.Action("NguoiDung", "NguoiDung", new { area = "Admin" })">Người dùng</a></p>
+                <p><a href="@Url.Action("NhanVien", "NhanVien", new { area = "Admin" })">Nhân viên</a></p>
+
+            </div>
+
+            <!-- Quản lý shop -->
+            <li onclick="toggleMenu('donhang', event)" class="@(Request.Url.AbsolutePath.Contains("DonHangOnline") || Request.Url.AbsolutePath.Contains("DonHangOffline") ? "active" : "")">
+                <span>Đơn hàng</span>
+                <i class="fas fa-chevron-right"></i>
+            </li>
+            <div id="submenu-donhang" class="submenu">
+                <p><a href="@Url.Action("Index", "DonHangOnline", new { area = "Admin" })">Đơn hàng Online</a></p>
+                <p><a href="@Url.Action("Index", "DonHangOffline", new { area = "Admin" })">Đơn hàng Offline</a></p>
+
+            </div>
+            <li class="@(Request.Url.AbsolutePath.Contains("ThanhToan") ? "active" : "")">
+                <a href="@Url.Action("Index", "PhuongThucThanhToan", new { area = "Admin" })">Thanh toán</a>
+            </li>
+            <li class="@(Request.Url.AbsolutePath.Contains("HoaDon") ? "active" : "")">
+                <a href="@Url.Action("HoaDon", "HoaDon", new { area = "Admin" })">Hóa đơn</a>
+            </li>
+            <li><a href="@Url.Action("Logout", "Login")">Đăng xuất</a></li>
+        </ul>
+
+    </div>
+
+
+    <div class="main-wrapper">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand navbar-light shadow-sm px-4" style="height: 85px;">
+            <!-- Search -->
+            <form class="d-none d-sm-inline-block form-inline" style="flex: 1; max-width: 600px;" action="@Url.Action("GlobalSearch", "HomeAdmin")" method="get">
+                <div class="input-group">
+                    <select class="form-select rounded-start" name="filterType" style="max-width: 150px;">
+                        <option value="all" @(Request.QueryString["filterType"] == "all" ? "selected" : "")>Tất cả</option>
+                        <option value="food" @(Request.QueryString["filterType"] == "food" ? "selected" : "")>Sản phẩm</option>
+                        <option value="invoice" @(Request.QueryString["filterType"] == "invoice" ? "selected" : "")>Hóa đơn</option>
+                        <option value="staff" @(Request.QueryString["filterType"] == "staff" ? "selected" : "")>Nhân viên</option>
+                        <option value="ingredient" @(Request.QueryString["filterType"] == "ingredient" ? "selected" : "")>Nguyên liệu</option>
+                    </select>
+
+                    <input type="text" class="form-control" name="query" placeholder="Tìm kiếm..." aria-label="Search" value="@Request.QueryString["query"]" />
+
+                    <button class="btn btn-light rounded-end" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+            <!-- Hiển thị lỗi -->
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-warning mt-2" style="max-width: 400px;">
+                    @TempData["Error"]
+                </div>
+            }
+
+
+            <!-- Right icons -->
+            <ul class="navbar-nav ms-auto d-flex align-items-center">
+                <li class="nav-item mx-3">
+                    <a class="nav-link" href="#"><i class="fas fa-envelope"></i></a>
+                </li>
+                <li class="nav-item mx-3">
+                    <a class="nav-link" href="#"><i class="fas fa-bell"></i></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Hi, @Session["UserName"]
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="#">Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="@Url.Action("Logout", "Login")">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Content -->
+        <div class="content">
+            @RenderBody()
+        </div>
+        <!-- Nút điều hướng lên đầu và xuống cuối trang -->
+        <div class="scroll-buttons">
+            <button id="scrollToTop"><i class="fas fa-arrow-up"></i></button>
+            <button id="scrollToBottom"><i class="fas fa-arrow-down"></i></button>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="text-center">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
+            </div>
+            <div class="text-center">
+                <p>©2025 Bản quyền Admin Rosabelle Tea - Chỉ dành cho quản trị viên</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        function toggleMenu(menuId, event) {
+            event.stopPropagation(); // Ngăn lan sự kiện xuống thẻ <a>
+            const submenu = document.getElementById('submenu-' + menuId);
+            submenu.classList.toggle('show');
+        }
+    </script>
+    <script>
+    $(document).ready(function () {
+        // Khi click nút search hoặc nhấn Enter
+        $('#globalSearchBtn').click(function () {
+            performGlobalSearch();
+        });
+
+        $('#globalSearchInput').keypress(function (e) {
+            if (e.which == 13) { // Enter
+                performGlobalSearch();
+            }
+        });
+        document.getElementById("scrollToTop").addEventListener("click", function () {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        document.getElementById("scrollToBottom").addEventListener("click", function () {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+        });
+        function toggleMenu(menuId, event) {
+            event.stopPropagation();
+            let submenu = document.getElementById("submenu-" + menuId).parentElement;
+            submenu.classList.toggle("active");
+        }
+        document.addEventListener("click", function (event) {
+            const toggleMenus = document.querySelectorAll(".toggleMenu");
+            toggleMenus.forEach((menu) => {
+                if (!menu.contains(event.target)) {
+                    menu.classList.remove("open"); // Đóng menu khi click bên ngoài
+                }
+            });
+        });
+
+
+        // Xử lý tìm kiếm
+        function performGlobalSearch() {
+            let keyword = $('#globalSearchInput').val();
+            if (keyword.trim() == '') {
+                $('#searchResults').hide();
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("GlobalSearch", "HomeAdmin")', // đổi "Admin" thành Controller thực tế
+                type: 'GET',
+                data: { keyword: keyword },
+                success: function (data) {
+                    let html = '';
+                    if (data.length === 0) {
+                        html = '<p>Không tìm thấy kết quả.</p>';
+                    } else {
+                        data.forEach(item => {
+                            html += `<p><strong>${item.Type}</strong>: ${item.Name || item.Id}</p>`;
+                        });
+                    }
+                    $('#searchResults').html(html).show();
+                }
+            });
+        }
+
+        // Ẩn box khi click ra ngoài
+        $(document).click(function (e) {
+            if (!$(e.target).closest('#searchResults, #globalSearchInput, #globalSearchBtn').length) {
+                $('#searchResults').hide();
+            }
+        });
+    });
+    </script>
+
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

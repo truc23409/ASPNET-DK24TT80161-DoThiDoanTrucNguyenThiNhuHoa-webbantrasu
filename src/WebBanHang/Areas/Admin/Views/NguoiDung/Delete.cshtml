@@ -1,0 +1,15 @@
+﻿@model WebBanHang.Models.User
+
+@{
+    ViewBag.Title = "Xóa người dùng";
+}
+
+<h2>Xóa người dùng</h2>
+
+<p>Bạn có chắc chắn muốn xóa người dùng <strong>@Model.FullName</strong> không?</p>
+
+<form method="post">
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-danger">Xóa</button>
+    <a href="@Url.Action("NguoiDung", "NguoiDung")" class="btn btn-secondary">Hủy</a>
+</form>
